@@ -274,10 +274,22 @@ class TerminalUI {
         const cursor = this.terminal.querySelector('.cursor');
         if (cursor) cursor.remove();
 
-        // Add final cursor at the end
+        // Add final empty line with line number
         const finalLine = document.createElement('div');
         finalLine.className = 'terminal-line';
-        finalLine.innerHTML = `<span class="cursor">█</span>`;
+
+        // Add line number for the empty line
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = (this.lines.length + 1).toString().padStart(3, ' ');
+        finalLine.appendChild(lineNumber);
+
+        // Add cursor
+        const finalCursor = document.createElement('span');
+        finalCursor.className = 'cursor';
+        finalCursor.textContent = '█';
+        finalLine.appendChild(finalCursor);
+
         this.terminal.appendChild(finalLine);
     }
 
