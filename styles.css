@@ -277,7 +277,7 @@ header p {
     overflow-y: auto;
     overflow-x: auto;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.6;
     tab-size: 4;
     text-align: left;
@@ -476,7 +476,7 @@ body.theme-nord {
     }
 
     .terminal-body {
-        font-size: 0.8125rem;
+        font-size: 0.875rem;
         padding: 1rem;
         max-height: 400px;
     }
@@ -494,7 +494,7 @@ body.theme-nord {
     }
 
     .terminal-body {
-        font-size: 0.75rem;
+        font-size: 0.8125rem;
         padding: 0.75rem;
         max-height: 300px;
     }
