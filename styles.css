@@ -95,7 +95,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 4px;
     color: var(--text-primary);
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 .control-group select {
@@ -142,7 +142,7 @@ body {
     border-radius: 4px;
     color: var(--terminal-text);
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.875rem;
+    font-size: 1rem;
     resize: vertical;
     white-space: pre;
     tab-size: 4;
@@ -503,12 +503,12 @@ body.theme-nord {
 
     .control-group input[type="text"],
     .control-group select {
-        font-size: 0.75rem;
+        font-size: 1rem;
     }
 
     #code-input {
         min-height: 120px;
-        font-size: 0.75rem;
+        font-size: 1rem;
     }
 }
 
