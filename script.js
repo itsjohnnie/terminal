@@ -12,7 +12,8 @@ class TerminalUI {
         this.speedValue = document.getElementById('speed-value');
         this.languageSelect = document.getElementById('language');
         this.themeSelect = document.getElementById('theme');
-        this.promptInput = document.getElementById('prompt');
+        this.terminalTitleInput = document.getElementById('terminal-title');
+        this.terminalTitleDisplay = document.getElementById('terminal-title-display');
         this.showLineNumbersCheckbox = document.getElementById('show-line-numbers');
 
         // Export buttons
@@ -29,7 +30,6 @@ class TerminalUI {
         this.currentChar = 0;
         this.lines = [];
         this.animationTimeout = null;
-        this.promptText = '$ ';
 
         this.init();
     }
@@ -56,8 +56,8 @@ class TerminalUI {
             this.changeTheme(e.target.value);
         });
 
-        this.promptInput.addEventListener('input', (e) => {
-            this.promptText = e.target.value;
+        this.terminalTitleInput.addEventListener('input', (e) => {
+            this.updateTerminalTitle(e.target.value);
         });
 
         this.showLineNumbersCheckbox.addEventListener('change', (e) => {
@@ -88,6 +88,10 @@ class TerminalUI {
         document.body.className = `theme-${theme}`;
     }
 
+    updateTerminalTitle(title) {
+        this.terminalTitleDisplay.textContent = title || 'Terminal';
+    }
+
     toggleLineNumbers(show) {
         if (show) {
             this.terminal.classList.add('show-line-numbers');
@@ -99,7 +103,6 @@ class TerminalUI {
     clearTerminal() {
         this.terminal.innerHTML = `
             <div class="terminal-line">
-                <span class="prompt">${this.promptText}</span>
                 <span class="cursor">█</span>
             </div>
         `;
@@ -123,7 +126,6 @@ class TerminalUI {
         this.resetState();
         this.terminal.innerHTML = `
             <div class="terminal-line">
-                <span class="prompt">${this.promptText}</span>
                 <span class="cursor">█</span>
             </div>
         `;
@@ -193,12 +195,6 @@ class TerminalUI {
             lineNumber.className = 'line-number';
             lineNumber.textContent = (this.currentLine + 1).toString().padStart(3, ' ');
             lineElement.appendChild(lineNumber);
-
-            // Add prompt
-            const prompt = document.createElement('span');
-            prompt.className = 'prompt';
-            prompt.textContent = this.promptText;
-            lineElement.appendChild(prompt);
 
             const codeSpan = document.createElement('span');
             codeSpan.className = 'code-content';
@@ -271,7 +267,7 @@ class TerminalUI {
         // Add final cursor at the end
         const finalLine = document.createElement('div');
         finalLine.className = 'terminal-line';
-        finalLine.innerHTML = `<span class="prompt">${this.promptText}</span><span class="cursor">█</span>`;
+        finalLine.innerHTML = `<span class="cursor">█</span>`;
         this.terminal.appendChild(finalLine);
     }
 

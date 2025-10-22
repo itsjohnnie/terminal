@@ -54,8 +54,8 @@
             </div>
 
             <div class="control-group">
-                <label for="prompt">Prompt</label>
-                <input type="text" id="prompt" value="$ " placeholder="$ ">
+                <label for="terminal-title">Terminal Title</label>
+                <input type="text" id="terminal-title" value="Terminal" placeholder="Terminal">
             </div>
 
             <div class="control-group">
@@ -84,11 +84,10 @@
                     <span class="terminal-button minimize"></span>
                     <span class="terminal-button maximize"></span>
                 </div>
-                <div class="terminal-title">Terminal</div>
+                <div class="terminal-title" id="terminal-title-display">Terminal</div>
             </div>
             <div class="terminal-body" id="terminal">
                 <div class="terminal-line">
-                    <span class="prompt">$ </span>
                     <span class="cursor">█</span>
                 </div>
             </div>

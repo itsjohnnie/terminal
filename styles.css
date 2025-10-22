@@ -298,8 +298,8 @@ header p {
     display: inline-block;
     color: var(--text-secondary);
     opacity: 0.5;
-    margin-right: 1rem;
-    min-width: 2rem;
+    margin-right: 0.5rem;
+    min-width: 1.5rem;
     text-align: right;
     user-select: none;
 }
@@ -310,11 +310,6 @@ header p {
 
 .terminal-body:not(.show-line-numbers) .line-number {
     display: none;
-}
-
-.prompt {
-    color: var(--accent);
-    font-weight: bold;
 }
 
 .cursor {
