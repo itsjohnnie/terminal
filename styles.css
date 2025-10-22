@@ -340,8 +340,12 @@ header p {
 
 /* Loading Messages */
 .loading-line {
-    font-style: italic;
     color: var(--text-secondary);
+}
+
+.loading-spinner {
+    color: var(--accent);
+    font-weight: bold;
 }
 
 .loading-text {
@@ -353,7 +357,7 @@ header p {
         opacity: 0;
     }
     100% {
-        opacity: 0.7;
+        opacity: 1;
     }
 }
 

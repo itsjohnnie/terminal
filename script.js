@@ -32,19 +32,25 @@ class TerminalUI {
         this.animationTimeout = null;
         this.isLoadingPhase = false;
         this.loadingMessages = [
-            'Initializing terminal...',
-            'Loading syntax highlighter...',
-            'Preparing code animation...',
-            'Setting up environment...',
-            'Compiling thoughts...',
-            'Warming up the compiler...',
-            'Checking dependencies...',
-            'Optimizing output...',
-            'Reading source files...',
-            'Parsing code structure...',
-            'Analyzing syntax...',
-            'Configuring display...'
+            'Thinking',
+            'Processing',
+            'Compiling',
+            'Brewing',
+            'Crafting',
+            'Initializing',
+            'Loading',
+            'Preparing',
+            'Computing',
+            'Analyzing',
+            'Optimizing',
+            'Bootstrapping',
+            'Synthesizing',
+            'Calibrating',
+            'Pondering',
+            'Configuring'
         ];
+        this.spinnerFrames = ['|', '/', '-', '\\'];
+        this.currentSpinnerFrame = 0;
 
         this.init();
     }
@@ -203,7 +209,10 @@ class TerminalUI {
         // Create loading line element
         const loadingLine = document.createElement('div');
         loadingLine.className = 'terminal-line loading-line';
-        loadingLine.style.opacity = '0.7';
+
+        const spinnerSpan = document.createElement('span');
+        spinnerSpan.className = 'loading-spinner';
+        loadingLine.appendChild(spinnerSpan);
 
         const loadingText = document.createElement('span');
         loadingText.className = 'loading-text';
@@ -211,13 +220,27 @@ class TerminalUI {
 
         this.terminal.appendChild(loadingLine);
 
+        // Spinner animation interval (updates every 500ms)
+        const spinnerInterval = setInterval(() => {
+            if (!this.isLoadingPhase) {
+                clearInterval(spinnerInterval);
+                return;
+            }
+            this.currentSpinnerFrame = (this.currentSpinnerFrame + 1) % this.spinnerFrames.length;
+            spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
+        }, 500);
+
         // Show each message for 2 seconds
         for (let i = 0; i < selectedMessages.length; i++) {
             if (!this.isLoadingPhase) break; // Allow interruption
 
             loadingText.textContent = selectedMessages[i];
+            spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
+
+        // Clean up
+        clearInterval(spinnerInterval);
 
         // Remove loading line
         if (loadingLine.parentNode) {
