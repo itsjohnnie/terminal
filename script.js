@@ -171,8 +171,8 @@ class TerminalUI {
     }
 
     getTypingDelay(currentChar, nextChar) {
-        // Base speed with slight random variation (±20%)
-        const baseDelay = this.typingSpeed * (0.8 + Math.random() * 0.4);
+        // Base speed with more random variation (±30%)
+        const baseDelay = this.typingSpeed * (0.7 + Math.random() * 0.6);
 
         // Characters that indicate natural pause points
         const pauseChars = [' ', ',', ';', '.', ':', '!', '?', ')', '}', ']', '>', '\n'];
@@ -181,15 +181,15 @@ class TerminalUI {
         // Check if current character is a pause point
         if (longPauseChars.includes(currentChar)) {
             // Longer pause after sentence-ending punctuation
-            return baseDelay * (2.5 + Math.random() * 0.5);
+            return baseDelay * (3.5 + Math.random() * 1.5);
         } else if (pauseChars.includes(currentChar)) {
             // Medium pause after commas, spaces, etc.
-            return baseDelay * (1.5 + Math.random() * 0.5);
+            return baseDelay * (2.0 + Math.random() * 1.0);
         } else if (currentChar === '(' || currentChar === '{' || currentChar === '[') {
-            // Slight pause before typing inside brackets
-            return baseDelay * (1.2 + Math.random() * 0.3);
+            // Noticeable pause before typing inside brackets
+            return baseDelay * (1.8 + Math.random() * 0.7);
         } else {
-            // Normal typing with slight variation
+            // Normal typing with variation
             return baseDelay;
         }
     }

@@ -36,24 +36,6 @@ body {
     flex-direction: column;
 }
 
-/* Header */
-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding: 1rem;
-}
-
-header h1 {
-    font-size: clamp(1.5rem, 5vw, 2.5rem);
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-}
-
-header p {
-    color: var(--text-secondary);
-    font-size: clamp(0.875rem, 2.5vw, 1rem);
-}
-
 /* Controls Panel */
 .controls-panel {
     background-color: var(--bg-secondary);
@@ -464,30 +446,26 @@ body.theme-nord {
     }
 
     /* Reorder layout on mobile */
-    header {
+    .terminal-section {
         order: 1;
     }
 
-    .terminal-section {
+    .input-section {
         order: 2;
     }
 
-    .input-section {
-        order: 3;
-    }
-
     .controls-panel {
-        order: 4;
+        order: 3;
         grid-template-columns: 1fr;
         padding: 1rem;
     }
 
     .export-section {
-        order: 5;
+        order: 4;
     }
 
     .info-section {
-        order: 6;
+        order: 5;
     }
 
     .button-group {
@@ -497,10 +475,6 @@ body.theme-nord {
     .btn {
         width: 100%;
         flex: none;
-    }
-
-    header h1 {
-        font-size: 1.5rem;
     }
 
     .terminal-body {
