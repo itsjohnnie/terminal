@@ -13,6 +13,7 @@ class TerminalUI {
         this.languageSelect = document.getElementById('language');
         this.themeSelect = document.getElementById('theme');
         this.promptInput = document.getElementById('prompt');
+        this.showLineNumbersCheckbox = document.getElementById('show-line-numbers');
 
         // Export buttons
         this.exportHtmlBtn = document.getElementById('export-html');
@@ -59,6 +60,10 @@ class TerminalUI {
             this.promptText = e.target.value;
         });
 
+        this.showLineNumbersCheckbox.addEventListener('change', (e) => {
+            this.toggleLineNumbers(e.target.checked);
+        });
+
         // Export buttons
         this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
         this.exportCodeBtn.addEventListener('click', () => this.copyCode());
@@ -81,6 +86,14 @@ class TerminalUI {
 
     changeTheme(theme) {
         document.body.className = `theme-${theme}`;
+    }
+
+    toggleLineNumbers(show) {
+        if (show) {
+            this.terminal.classList.add('show-line-numbers');
+        } else {
+            this.terminal.classList.remove('show-line-numbers');
+        }
     }
 
     clearTerminal() {
@@ -174,7 +187,18 @@ class TerminalUI {
         if (this.currentChar === 0) {
             const lineElement = document.createElement('div');
             lineElement.className = 'terminal-line';
-            lineElement.innerHTML = `<span class="prompt">${this.promptText}</span>`;
+
+            // Add line number
+            const lineNumber = document.createElement('span');
+            lineNumber.className = 'line-number';
+            lineNumber.textContent = (this.currentLine + 1).toString().padStart(3, ' ');
+            lineElement.appendChild(lineNumber);
+
+            // Add prompt
+            const prompt = document.createElement('span');
+            prompt.className = 'prompt';
+            prompt.textContent = this.promptText;
+            lineElement.appendChild(prompt);
 
             const codeSpan = document.createElement('span');
             codeSpan.className = 'code-content';
