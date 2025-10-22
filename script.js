@@ -220,7 +220,7 @@ class TerminalUI {
 
         this.terminal.appendChild(loadingLine);
 
-        // Spinner animation interval (updates every 500ms)
+        // Spinner animation interval (updates every 300ms)
         const spinnerInterval = setInterval(() => {
             if (!this.isLoadingPhase) {
                 clearInterval(spinnerInterval);
@@ -228,7 +228,7 @@ class TerminalUI {
             }
             this.currentSpinnerFrame = (this.currentSpinnerFrame + 1) % this.spinnerFrames.length;
             spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
-        }, 500);
+        }, 300);
 
         // Show each message for 2 seconds
         for (let i = 0; i < selectedMessages.length; i++) {
