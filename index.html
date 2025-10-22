@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal UI Playground</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Terminal UI Playground</h1>
+            <p>Paste your code and watch it animate in a terminal</p>
+        </header>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label for="speed">Typing Speed (ms)</label>
+                <input type="range" id="speed" min="10" max="200" value="50" step="10">
+                <span id="speed-value">50ms</span>
+            </div>
+
+            <div class="control-group">
+                <label for="language">Language</label>
+                <select id="language">
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="csharp">C#</option>
+                    <option value="php">PHP</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="go">Go</option>
+                    <option value="rust">Rust</option>
+                    <option value="typescript">TypeScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="sql">SQL</option>
+                    <option value="bash">Bash</option>
+                    <option value="plaintext">Plain Text</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="theme">Theme</label>
+                <select id="theme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="monokai">Monokai</option>
+                    <option value="nord">Nord</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="prompt">Prompt</label>
+                <input type="text" id="prompt" value="$ " placeholder="$ ">
+            </div>
+        </div>
+
+        <div class="input-section">
+            <label for="code-input">Paste Your Code Here</label>
+            <textarea id="code-input" placeholder="Paste your code here..."></textarea>
+            <div class="button-group">
+                <button id="start-btn" class="btn btn-primary">Start Animation</button>
+                <button id="pause-btn" class="btn btn-secondary">Pause</button>
+                <button id="reset-btn" class="btn btn-secondary">Reset</button>
+                <button id="clear-btn" class="btn btn-secondary">Clear</button>
+            </div>
+        </div>
+
+        <div class="terminal-section">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="terminal-button close"></span>
+                    <span class="terminal-button minimize"></span>
+                    <span class="terminal-button maximize"></span>
+                </div>
+                <div class="terminal-title">Terminal</div>
+            </div>
+            <div class="terminal-body" id="terminal">
+                <div class="terminal-line">
+                    <span class="prompt">$ </span>
+                    <span class="cursor">█</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3>Export</h3>
+            <div class="button-group">
+                <button id="export-html" class="btn btn-export">Export as HTML</button>
+                <button id="export-gif" class="btn btn-export">Copy as Code</button>
+                <button id="export-video" class="btn btn-export">Export as JSON</button>
+                <button id="screenshot" class="btn btn-export">Take Screenshot</button>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>How to Use</h3>
+            <ol>
+                <li>Paste your code in the input field above</li>
+                <li>Customize the typing speed, language, and theme</li>
+                <li>Click "Start Animation" to see your code animate</li>
+                <li>Use the export options to save your terminal animation</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
