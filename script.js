@@ -379,19 +379,196 @@ class TerminalUI {
     }
 }
 
-// Initialize the app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    const terminal = new TerminalUI();
-
-    // Add sample code for demonstration
-    const sampleCode = `// Sample JavaScript Code
+// Code examples for different languages
+const codeExamples = {
+    javascript: `// Fibonacci sequence in JavaScript
 function fibonacci(n) {
     if (n <= 1) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
 
-console.log(fibonacci(10));`;
+console.log(fibonacci(10));`,
+
+    python: `# Fibonacci sequence in Python
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(10))`,
+
+    java: `// Fibonacci sequence in Java
+public class Fibonacci {
+    public static int fibonacci(int n) {
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(fibonacci(10));
+    }
+}`,
+
+    cpp: `// Fibonacci sequence in C++
+#include <iostream>
+using namespace std;
+
+int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    cout << fibonacci(10) << endl;
+    return 0;
+}`,
+
+    csharp: `// Fibonacci sequence in C#
+using System;
+
+class Program {
+    static int Fibonacci(int n) {
+        if (n <= 1) return n;
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+
+    static void Main() {
+        Console.WriteLine(Fibonacci(10));
+    }
+}`,
+
+    php: `<?php
+// Fibonacci sequence in PHP
+function fibonacci($n) {
+    if ($n <= 1) return $n;
+    return fibonacci($n - 1) + fibonacci($n - 2);
+}
+
+echo fibonacci(10);
+?>`,
+
+    ruby: `# Fibonacci sequence in Ruby
+def fibonacci(n)
+    return n if n <= 1
+    fibonacci(n - 1) + fibonacci(n - 2)
+end
+
+puts fibonacci(10)`,
+
+    go: `// Fibonacci sequence in Go
+package main
+
+import "fmt"
+
+func fibonacci(n int) int {
+    if n <= 1 {
+        return n
+    }
+    return fibonacci(n-1) + fibonacci(n-2)
+}
+
+func main() {
+    fmt.Println(fibonacci(10))
+}`,
+
+    rust: `// Fibonacci sequence in Rust
+fn fibonacci(n: u32) -> u32 {
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => fibonacci(n - 1) + fibonacci(n - 2),
+    }
+}
+
+fn main() {
+    println!("{}", fibonacci(10));
+}`,
+
+    typescript: `// Fibonacci sequence in TypeScript
+function fibonacci(n: number): number {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10));`,
+
+    html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>This is a sample HTML page.</p>
+</body>
+</html>`,
+
+    css: `/* Modern CSS styling */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}`,
+
+    sql: `-- Sample SQL queries
+SELECT users.name, orders.total
+FROM users
+INNER JOIN orders ON users.id = orders.user_id
+WHERE orders.status = 'completed'
+  AND orders.total > 100
+ORDER BY orders.total DESC
+LIMIT 10;`,
+
+    bash: `#!/bin/bash
+# Fibonacci sequence in Bash
+
+fibonacci() {
+    if [ $1 -le 1 ]; then
+        echo $1
+    else
+        echo $(( $(fibonacci $(($1-1))) + $(fibonacci $(($1-2))) ))
+    fi
+}
+
+fibonacci 10`,
+
+    plaintext: `This is plain text.
+No syntax highlighting will be applied.
+
+You can use this mode for:
+- General notes
+- Documentation
+- Plain text output
+- Any non-code content`
+};
+
+// Initialize the app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    const terminal = new TerminalUI();
+    const codeInput = document.getElementById('code-input');
+    const languageSelect = document.getElementById('language');
 
     // Set default code in the input
-    document.getElementById('code-input').value = sampleCode;
+    codeInput.value = codeExamples.javascript;
+
+    // Update code example when language changes
+    languageSelect.addEventListener('change', (e) => {
+        const language = e.target.value;
+        if (codeExamples[language]) {
+            codeInput.value = codeExamples[language];
+        }
+    });
 });
