@@ -298,8 +298,8 @@ header p {
     display: inline-block;
     color: var(--text-secondary);
     opacity: 0.5;
-    margin-right: 0.5rem;
-    min-width: 1.5rem;
+    margin-right: 0.25rem;
+    min-width: 1rem;
     text-align: right;
     user-select: none;
 }
