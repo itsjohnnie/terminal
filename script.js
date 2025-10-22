@@ -148,6 +148,30 @@ class TerminalUI {
         this.pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
     }
 
+    getTypingDelay(currentChar, nextChar) {
+        // Base speed with slight random variation (±20%)
+        const baseDelay = this.typingSpeed * (0.8 + Math.random() * 0.4);
+
+        // Characters that indicate natural pause points
+        const pauseChars = [' ', ',', ';', '.', ':', '!', '?', ')', '}', ']', '>', '\n'];
+        const longPauseChars = ['.', '!', '?', ';'];
+
+        // Check if current character is a pause point
+        if (longPauseChars.includes(currentChar)) {
+            // Longer pause after sentence-ending punctuation
+            return baseDelay * (2.5 + Math.random() * 0.5);
+        } else if (pauseChars.includes(currentChar)) {
+            // Medium pause after commas, spaces, etc.
+            return baseDelay * (1.5 + Math.random() * 0.5);
+        } else if (currentChar === '(' || currentChar === '{' || currentChar === '[') {
+            // Slight pause before typing inside brackets
+            return baseDelay * (1.2 + Math.random() * 0.3);
+        } else {
+            // Normal typing with slight variation
+            return baseDelay;
+        }
+    }
+
     startAnimation() {
         const code = this.codeInput.value.trim();
 
@@ -215,6 +239,11 @@ class TerminalUI {
             // Add next character
             const char = currentLineText[this.currentChar];
             codeSpan.textContent += char;
+
+            // Get next character for delay calculation
+            const nextChar = this.currentChar + 1 < currentLineText.length ?
+                            currentLineText[this.currentChar + 1] : '';
+
             this.currentChar++;
 
             // Apply syntax highlighting in real-time
@@ -230,7 +259,9 @@ class TerminalUI {
             // Scroll to bottom
             this.terminal.scrollTop = this.terminal.scrollHeight;
 
-            this.animationTimeout = setTimeout(() => this.animateNextChar(), this.typingSpeed);
+            // Use human-like typing delay
+            const delay = this.getTypingDelay(char, nextChar);
+            this.animationTimeout = setTimeout(() => this.animateNextChar(), delay);
         } else {
             // Move to next line
             const cursor = lineElement.querySelector('.cursor');
@@ -242,7 +273,9 @@ class TerminalUI {
             this.currentLine++;
             this.currentChar = 0;
 
-            this.animationTimeout = setTimeout(() => this.animateNextChar(), this.typingSpeed * 5);
+            // Add natural pause at end of line with variation
+            const lineBreakDelay = this.typingSpeed * (3 + Math.random() * 2);
+            this.animationTimeout = setTimeout(() => this.animateNextChar(), lineBreakDelay);
         }
     }
 
