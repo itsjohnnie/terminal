@@ -32,6 +32,8 @@ body {
     max-width: 50rem;
     width: 90%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -457,9 +459,31 @@ body.theme-nord {
         padding: 10px;
     }
 
+    /* Reorder layout on mobile */
+    header {
+        order: 1;
+    }
+
+    .terminal-section {
+        order: 2;
+    }
+
+    .input-section {
+        order: 3;
+    }
+
     .controls-panel {
+        order: 4;
         grid-template-columns: 1fr;
         padding: 1rem;
+    }
+
+    .export-section {
+        order: 5;
+    }
+
+    .info-section {
+        order: 6;
     }
 
     .button-group {
