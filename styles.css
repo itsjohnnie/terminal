@@ -275,6 +275,7 @@ header p {
     min-height: 300px;
     max-height: 500px;
     overflow-y: auto;
+    overflow-x: auto;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.875rem;
     line-height: 1.6;
@@ -288,9 +289,7 @@ header p {
     color: var(--terminal-text);
     margin: 0;
     margin-bottom: 0.25rem;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    width: 100%;
+    white-space: nowrap;
 }
 
 .terminal-line:first-child {
@@ -495,6 +494,7 @@ body.theme-nord {
 /* Scrollbar Styling */
 .terminal-body::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
 }
 
 .terminal-body::-webkit-scrollbar-track {
