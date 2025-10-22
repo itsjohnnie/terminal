@@ -582,9 +582,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const terminal = new TerminalUI();
     const codeInput = document.getElementById('code-input');
     const languageSelect = document.getElementById('language');
+    const terminalElement = document.getElementById('terminal');
 
     // Set default code in the input
     codeInput.value = codeExamples.javascript;
+
+    // Show line numbers by default
+    terminalElement.classList.add('show-line-numbers');
 
     // Update code example when language changes
     languageSelect.addEventListener('change', (e) => {
