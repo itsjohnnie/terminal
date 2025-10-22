@@ -271,6 +271,7 @@ header p {
 .terminal-body {
     background-color: var(--terminal-bg);
     padding: 1.5rem;
+    padding-top: 1.5rem;
     min-height: 300px;
     max-height: 500px;
     overflow-y: auto;
@@ -280,18 +281,20 @@ header p {
     tab-size: 4;
     text-align: left;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    display: block;
 }
 
 .terminal-line {
     color: var(--terminal-text);
+    margin: 0;
     margin-bottom: 0.25rem;
     word-wrap: break-word;
     white-space: pre-wrap;
     width: 100%;
+}
+
+.terminal-line:first-child {
+    margin-top: 0;
 }
 
 .code-content {
