@@ -152,6 +152,8 @@ header p {
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.875rem;
     resize: vertical;
+    white-space: pre;
+    tab-size: 4;
 }
 
 #code-input::placeholder {
@@ -267,12 +269,19 @@ header p {
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.875rem;
     line-height: 1.6;
+    tab-size: 4;
 }
 
 .terminal-line {
     color: var(--terminal-text);
     margin-bottom: 0.25rem;
     word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.code-content {
+    white-space: pre;
+    display: inline;
 }
 
 .prompt {
