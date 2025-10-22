@@ -392,5 +392,6 @@ function fibonacci(n) {
 
 console.log(fibonacci(10));`;
 
-    document.getElementById('code-input').placeholder = sampleCode;
+    // Set default code in the input
+    document.getElementById('code-input').value = sampleCode;
 });
