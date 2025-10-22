@@ -217,6 +217,16 @@ class TerminalUI {
             codeSpan.textContent += char;
             this.currentChar++;
 
+            // Apply syntax highlighting in real-time
+            this.highlightLine(lineElement);
+
+            // Ensure cursor is at the end after highlighting
+            const cursor = lineElement.querySelector('.cursor');
+            if (cursor) {
+                lineElement.removeChild(cursor);
+                lineElement.appendChild(cursor);
+            }
+
             // Scroll to bottom
             this.terminal.scrollTop = this.terminal.scrollHeight;
 
@@ -226,7 +236,7 @@ class TerminalUI {
             const cursor = lineElement.querySelector('.cursor');
             if (cursor) cursor.remove();
 
-            // Apply syntax highlighting to the completed line
+            // Final syntax highlighting for the completed line
             this.highlightLine(lineElement);
 
             this.currentLine++;
