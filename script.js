@@ -49,7 +49,7 @@ class TerminalUI {
             'Pondering',
             'Configuring'
         ];
-        this.spinnerFrames = ['◐', '◓', '◑', '◒'];
+        this.spinnerFrames = ['◐', '◓', '◑', '◒', '◆', '◇', '■', '□', '▲', '△', '◉', '◈'];
         this.currentSpinnerFrame = 0;
 
         this.init();
