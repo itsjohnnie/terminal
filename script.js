@@ -30,6 +30,21 @@ class TerminalUI {
         this.currentChar = 0;
         this.lines = [];
         this.animationTimeout = null;
+        this.isLoadingPhase = false;
+        this.loadingMessages = [
+            'Initializing terminal...',
+            'Loading syntax highlighter...',
+            'Preparing code animation...',
+            'Setting up environment...',
+            'Compiling thoughts...',
+            'Warming up the compiler...',
+            'Checking dependencies...',
+            'Optimizing output...',
+            'Reading source files...',
+            'Parsing code structure...',
+            'Analyzing syntax...',
+            'Configuring display...'
+        ];
 
         this.init();
     }
@@ -116,6 +131,7 @@ class TerminalUI {
         this.lines = [];
         this.isAnimating = false;
         this.isPaused = false;
+        this.isLoadingPhase = false;
         if (this.animationTimeout) {
             clearTimeout(this.animationTimeout);
         }
@@ -172,7 +188,44 @@ class TerminalUI {
         }
     }
 
-    startAnimation() {
+    async showLoadingMessages() {
+        // Select 3-4 random loading messages
+        const numMessages = 3 + Math.floor(Math.random() * 2); // 3 or 4
+        const selectedMessages = [];
+        const availableMessages = [...this.loadingMessages];
+
+        for (let i = 0; i < numMessages; i++) {
+            const randomIndex = Math.floor(Math.random() * availableMessages.length);
+            selectedMessages.push(availableMessages[randomIndex]);
+            availableMessages.splice(randomIndex, 1);
+        }
+
+        // Create loading line element
+        const loadingLine = document.createElement('div');
+        loadingLine.className = 'terminal-line loading-line';
+        loadingLine.style.opacity = '0.7';
+
+        const loadingText = document.createElement('span');
+        loadingText.className = 'loading-text';
+        loadingLine.appendChild(loadingText);
+
+        this.terminal.appendChild(loadingLine);
+
+        // Show each message for 2 seconds
+        for (let i = 0; i < selectedMessages.length; i++) {
+            if (!this.isLoadingPhase) break; // Allow interruption
+
+            loadingText.textContent = selectedMessages[i];
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        // Remove loading line
+        if (loadingLine.parentNode) {
+            loadingLine.remove();
+        }
+    }
+
+    async startAnimation() {
         const code = this.codeInput.value.trim();
 
         if (!code) {
@@ -190,12 +243,19 @@ class TerminalUI {
         this.resetState();
         this.lines = code.split('\n');
         this.isAnimating = true;
+        this.isLoadingPhase = true;
         this.updateButtonStates();
 
         // Clear terminal
         this.terminal.innerHTML = '';
 
-        // Start animation
+        // Show loading messages first
+        await this.showLoadingMessages();
+
+        // End loading phase
+        this.isLoadingPhase = false;
+
+        // Start actual animation
         this.animateNextChar();
     }
 

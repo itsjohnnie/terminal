@@ -336,6 +336,25 @@ header p {
     }
 }
 
+/* Loading Messages */
+.loading-line {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.loading-text {
+    animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.7;
+    }
+}
+
 /* Export Section */
 .export-section {
     background-color: var(--bg-secondary);
