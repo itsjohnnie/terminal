@@ -62,6 +62,13 @@ class TerminalUI {
         this.recordedChunks = [];
         this.isRecording = false;
 
+        // Dragging state
+        this.isDragging = false;
+        this.dragStartX = 0;
+        this.dragStartY = 0;
+        this.terminalStartX = 0;
+        this.terminalStartY = 0;
+
         this.init();
     }
 
@@ -116,6 +123,12 @@ class TerminalUI {
                 this.resetAnimation();
             }
         });
+
+        // Dragging functionality
+        const terminalHeader = document.querySelector('.terminal-header');
+        terminalHeader.addEventListener('mousedown', (e) => this.startDragging(e));
+        document.addEventListener('mousemove', (e) => this.drag(e));
+        document.addEventListener('mouseup', () => this.stopDragging());
     }
 
     updateSpeedDisplay() {
@@ -755,6 +768,53 @@ class TerminalUI {
             this.mediaRecorder.stop();
             this.recordVideoBtn.textContent = 'Record Video';
             this.recordVideoBtn.style.backgroundColor = '';
+        }
+    }
+
+    startDragging(e) {
+        // Don't drag if clicking on buttons or interactive elements
+        if (e.target.closest('button') || e.target.closest('.terminal-button')) {
+            return;
+        }
+
+        this.isDragging = true;
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+
+        const terminalSection = document.querySelector('.terminal-section');
+        const rect = terminalSection.getBoundingClientRect();
+        this.terminalStartX = rect.left;
+        this.terminalStartY = rect.top;
+
+        // Store the original width and height before changing position
+        const originalWidth = rect.width;
+        const originalHeight = rect.height;
+
+        // Change cursor and add visual feedback
+        document.body.style.cursor = 'grabbing';
+        terminalSection.style.position = 'fixed';
+        terminalSection.style.width = `${originalWidth}px`;
+        terminalSection.style.height = `${originalHeight}px`;
+        terminalSection.style.left = `${this.terminalStartX}px`;
+        terminalSection.style.top = `${this.terminalStartY}px`;
+        terminalSection.style.margin = '0';
+    }
+
+    drag(e) {
+        if (!this.isDragging) return;
+
+        const deltaX = e.clientX - this.dragStartX;
+        const deltaY = e.clientY - this.dragStartY;
+
+        const terminalSection = document.querySelector('.terminal-section');
+        terminalSection.style.left = `${this.terminalStartX + deltaX}px`;
+        terminalSection.style.top = `${this.terminalStartY + deltaY}px`;
+    }
+
+    stopDragging() {
+        if (this.isDragging) {
+            this.isDragging = false;
+            document.body.style.cursor = '';
         }
     }
 }

@@ -285,6 +285,12 @@ body {
         0 4px 8px rgba(0, 0, 0, 0.15),
         0 8px 16px rgba(0, 0, 0, 0.2),
         0 16px 32px rgba(0, 0, 0, 0.15);
+    cursor: grab;
+    user-select: none;
+}
+
+.terminal-header:active {
+    cursor: grabbing;
 }
 
 .terminal-body {
