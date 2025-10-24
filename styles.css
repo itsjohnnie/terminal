@@ -363,7 +363,7 @@ body {
 }
 
 .terminal-language {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     font-weight: 400;
     margin-left: auto;
@@ -445,7 +445,7 @@ body {
 
 /* Loading Messages */
 .loading-line {
-    color: var(--text-secondary);
+    color: var(--accent);
 }
 
 .loading-spinner {
@@ -454,7 +454,9 @@ body {
 }
 
 .loading-text {
-    animation: fadeInOut 0.5s ease-in-out;
+    color: var(--accent);
+    font-weight: normal;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 @keyframes fadeInOut {
@@ -520,6 +522,10 @@ body.theme-light {
     --button-hover: #005a9e;
 }
 
+body.theme-light .terminal-body {
+    font-weight: 500;
+}
+
 body.theme-dracula {
     --bg-primary: #282a36;
     --bg-secondary: #44475a;
@@ -546,6 +552,20 @@ body.theme-monokai {
     --terminal-text: #a6e22e;
     --button-bg: #f92672;
     --button-hover: #d91c5c;
+}
+
+body.theme-claude {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2b2b2b;
+    --bg-tertiary: #3a3a3a;
+    --text-primary: #e8e8e8;
+    --text-secondary: #9b9b9b;
+    --accent: #cc785c;
+    --border: #404040;
+    --terminal-bg: #1f1f1f;
+    --terminal-text: #cc785c;
+    --button-bg: #cc785c;
+    --button-hover: #b36850;
 }
 
 body.theme-nord {

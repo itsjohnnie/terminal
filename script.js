@@ -22,12 +22,13 @@ class TerminalUI {
 
         // Export buttons
         this.exportHtmlBtn = document.getElementById('export-html');
-        this.exportCodeBtn = document.getElementById('export-gif');
-        this.exportJsonBtn = document.getElementById('export-video');
+        this.copyCodeBtn = document.getElementById('copy-code');
+        this.exportJsonBtn = document.getElementById('export-json');
         this.screenshotBtn = document.getElementById('screenshot');
+        this.recordVideoBtn = document.getElementById('record-video');
 
         // State
-        this.typingSpeed = 50;
+        this.typingSpeed = 40;
         this.isPaused = false;
         this.isAnimating = false;
         this.currentLine = 0;
@@ -55,6 +56,11 @@ class TerminalUI {
         ];
         this.spinnerFrames = ['◐', '◓', '◑', '◒', '◆', '◇', '■', '□', '▲', '△', '◉', '◈'];
         this.currentSpinnerFrame = 0;
+
+        // Video recording state
+        this.mediaRecorder = null;
+        this.recordedChunks = [];
+        this.isRecording = false;
 
         this.init();
     }
@@ -97,9 +103,10 @@ class TerminalUI {
 
         // Export buttons
         this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
-        this.exportCodeBtn.addEventListener('click', () => this.copyCode());
+        this.copyCodeBtn.addEventListener('click', () => this.copyCode());
         this.exportJsonBtn.addEventListener('click', () => this.exportAsJson());
         this.screenshotBtn.addEventListener('click', () => this.takeScreenshot());
+        this.recordVideoBtn.addEventListener('click', () => this.toggleVideoRecording());
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -226,8 +233,8 @@ class TerminalUI {
     }
 
     getTypingDelay(currentChar, nextChar) {
-        // Base speed with more random variation (±30%)
-        const baseDelay = this.typingSpeed * (0.7 + Math.random() * 0.6);
+        // Base speed with much more random variation (±50% instead of ±30%)
+        const baseDelay = this.typingSpeed * (0.5 + Math.random() * 1.0);
 
         // Characters that indicate natural pause points
         const pauseChars = [' ', ',', ';', '.', ':', '!', '?', ')', '}', ']', '>', '\n'];
@@ -236,13 +243,13 @@ class TerminalUI {
         // Check if current character is a pause point
         if (longPauseChars.includes(currentChar)) {
             // Longer pause after sentence-ending punctuation
-            return baseDelay * (3.5 + Math.random() * 1.5);
+            return baseDelay * (3.5 + Math.random() * 2.0);
         } else if (pauseChars.includes(currentChar)) {
             // Medium pause after commas, spaces, etc.
-            return baseDelay * (2.0 + Math.random() * 1.0);
+            return baseDelay * (2.0 + Math.random() * 1.5);
         } else if (currentChar === '(' || currentChar === '{' || currentChar === '[') {
             // Noticeable pause before typing inside brackets
-            return baseDelay * (1.8 + Math.random() * 0.7);
+            return baseDelay * (1.8 + Math.random() * 1.0);
         } else {
             // Normal typing with variation
             return baseDelay;
@@ -291,13 +298,18 @@ class TerminalUI {
             spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
         }, 300);
 
-        // Show each message for 2 seconds
+        // Show each message with staggered character flip animation
         for (let i = 0; i < selectedMessages.length; i++) {
-            if (!this.isLoadingPhase) break; // Allow interruption
+            if (!this.isLoadingPhase) break;
 
-            loadingText.textContent = selectedMessages[i];
-            spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const newMessage = selectedMessages[i];
+            const oldMessage = loadingText.textContent;
+
+            // Animate character by character with stagger
+            await this.animateTextTransition(loadingText, oldMessage, newMessage);
+
+            // Hold the complete message for a moment
+            await new Promise(resolve => setTimeout(resolve, 1500));
         }
 
         // Clean up
@@ -307,6 +319,45 @@ class TerminalUI {
         if (loadingLine.parentNode) {
             loadingLine.remove();
         }
+    }
+
+    async animateTextTransition(element, oldText, newText) {
+        const maxLength = Math.max(oldText.length, newText.length);
+        const chars = [];
+
+        // Initialize with old characters or spaces
+        for (let i = 0; i < maxLength; i++) {
+            chars[i] = oldText[i] || '';
+        }
+
+        // Staggered animation - each character changes after a delay
+        const promises = [];
+        for (let i = 0; i < maxLength; i++) {
+            const promise = new Promise(async (resolve) => {
+                // Stagger delay: each character waits a bit longer
+                await new Promise(r => setTimeout(r, i * 30));
+
+                // Flip through random characters briefly
+                const flipDuration = 150;
+                const flipInterval = 30;
+                const flips = Math.floor(flipDuration / flipInterval);
+
+                for (let j = 0; j < flips; j++) {
+                    const randomChar = String.fromCharCode(33 + Math.floor(Math.random() * 94));
+                    chars[i] = randomChar;
+                    element.textContent = chars.join('');
+                    await new Promise(r => setTimeout(r, flipInterval));
+                }
+
+                // Set final character
+                chars[i] = newText[i] || '';
+                element.textContent = chars.join('');
+                resolve();
+            });
+            promises.push(promise);
+        }
+
+        await Promise.all(promises);
     }
 
     async startAnimation() {
@@ -575,6 +626,136 @@ class TerminalUI {
         a.download = filename;
         a.click();
         URL.revokeObjectURL(url);
+    }
+
+    async toggleVideoRecording() {
+        if (this.isRecording) {
+            this.stopVideoRecording();
+        } else {
+            this.startVideoRecording();
+        }
+    }
+
+    async startVideoRecording() {
+        const terminalSection = document.querySelector('.terminal-section');
+
+        if (!terminalSection) {
+            alert('Terminal not found!');
+            return;
+        }
+
+        if (!this.codeInput.value.trim()) {
+            alert('Please paste some code first!');
+            return;
+        }
+
+        try {
+            // Create a canvas to capture frames
+            const canvas = document.createElement('canvas');
+            const rect = terminalSection.getBoundingClientRect();
+
+            // Use higher resolution for better quality
+            const scale = 2; // Retina/HiDPI support
+            canvas.width = rect.width * scale;
+            canvas.height = rect.height * scale;
+            const ctx = canvas.getContext('2d', { alpha: false });
+
+            // Scale context to match
+            ctx.scale(scale, scale);
+
+            // Start capturing frames at 60 FPS for smoother video
+            this.recordedChunks = [];
+            const stream = canvas.captureStream(60);
+
+            // Try to use the best available codec with higher bitrate
+            let options = { videoBitsPerSecond: 8000000 }; // 8 Mbps
+
+            if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+                options.mimeType = 'video/webm;codecs=vp9';
+            } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+                options.mimeType = 'video/webm;codecs=vp8';
+            } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                options.mimeType = 'video/webm';
+            }
+
+            this.mediaRecorder = new MediaRecorder(stream, options);
+
+            this.mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    this.recordedChunks.push(event.data);
+                }
+            };
+
+            this.mediaRecorder.onstop = () => {
+                const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `terminal-recording-${Date.now()}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            this.mediaRecorder.start(100); // Collect data every 100ms
+            this.isRecording = true;
+            this.recordVideoBtn.textContent = 'Stop Recording';
+            this.recordVideoBtn.style.backgroundColor = '#ff5f56';
+
+            // Capture frames at consistent intervals (60 FPS = ~16.67ms)
+            let lastFrameTime = 0;
+            const targetFrameTime = 1000 / 60; // 60 FPS
+
+            const captureFrame = async (currentTime) => {
+                if (!this.isRecording) return;
+
+                const elapsed = currentTime - lastFrameTime;
+
+                if (elapsed >= targetFrameTime) {
+                    lastFrameTime = currentTime - (elapsed % targetFrameTime);
+
+                    try {
+                        const canvasCapture = await html2canvas(terminalSection, {
+                            backgroundColor: getComputedStyle(terminalSection).backgroundColor,
+                            scale: scale,
+                            logging: false,
+                            useCORS: true,
+                            allowTaint: true
+                        });
+
+                        // Draw scaled image
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(canvasCapture, 0, 0, rect.width, rect.height);
+                    } catch (err) {
+                        console.error('Frame capture error:', err);
+                    }
+                }
+
+                if (this.isRecording) {
+                    requestAnimationFrame(captureFrame);
+                }
+            };
+
+            requestAnimationFrame(captureFrame);
+
+            // Also trigger the animation to start
+            if (!this.isAnimating) {
+                this.startAnimation();
+            }
+
+            alert('Recording started! The video will have better quality at 60 FPS.');
+        } catch (err) {
+            console.error('Failed to start recording:', err);
+            alert('Failed to start recording. Please try again.');
+        }
+    }
+
+    stopVideoRecording() {
+        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+            this.isRecording = false;
+            this.mediaRecorder.stop();
+            this.recordVideoBtn.textContent = 'Record Video';
+            this.recordVideoBtn.style.backgroundColor = '';
+        }
     }
 }
 
