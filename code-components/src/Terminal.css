@@ -1,0 +1,289 @@
+/* Terminal Component Styles */
+.terminal-wrapper {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --accent: #00ff41;
+  --border: #404040;
+  --terminal-bg: #1e1e1e;
+  --terminal-text: #00ff41;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Theme Variants */
+.terminal-wrapper.theme-light {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e0e0e0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent: #007acc;
+  --border: #d0d0d0;
+  --terminal-bg: #ffffff;
+  --terminal-text: #333333;
+}
+
+.terminal-wrapper.theme-claude {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2b2b2b;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e8e8e8;
+  --text-secondary: #9b9b9b;
+  --accent: #cc785c;
+  --border: #404040;
+  --terminal-bg: #1f1f1f;
+  --terminal-text: #cc785c;
+}
+
+.terminal-wrapper.theme-dracula {
+  --bg-primary: #282a36;
+  --bg-secondary: #44475a;
+  --bg-tertiary: #6272a4;
+  --text-primary: #f8f8f2;
+  --text-secondary: #9fa1b0;
+  --accent: #ff79c6;
+  --border: #6272a4;
+  --terminal-bg: #282a36;
+  --terminal-text: #50fa7b;
+}
+
+.terminal-wrapper.theme-monokai {
+  --bg-primary: #272822;
+  --bg-secondary: #3e3d32;
+  --bg-tertiary: #49483e;
+  --text-primary: #f8f8f2;
+  --text-secondary: #cfcfc2;
+  --accent: #66d9ef;
+  --border: #49483e;
+  --terminal-bg: #272822;
+  --terminal-text: #a6e22e;
+}
+
+.terminal-wrapper.theme-nord {
+  --bg-primary: #2e3440;
+  --bg-secondary: #3b4252;
+  --bg-tertiary: #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary: #d8dee9;
+  --accent: #88c0d0;
+  --border: #4c566a;
+  --terminal-bg: #2e3440;
+  --terminal-text: #a3be8c;
+}
+
+.terminal-container {
+  max-width: 50rem;
+  width: 100%;
+}
+
+/* Aspect Ratios */
+.terminal-container.aspect-1-1 .terminal-body {
+  aspect-ratio: 1 / 1;
+  min-height: unset;
+  max-height: unset;
+}
+
+.terminal-container.aspect-3-2 .terminal-body {
+  aspect-ratio: 3 / 2;
+  min-height: unset;
+  max-height: unset;
+}
+
+.terminal-container.aspect-16-9 .terminal-body {
+  aspect-ratio: 16 / 9;
+  min-height: unset;
+  max-height: unset;
+}
+
+/* Terminal Header */
+.terminal-header {
+  background-color: var(--bg-tertiary);
+  padding: 0.5rem 0.5rem 0.5rem 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 8px 8px 0 0;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 16px 32px rgba(0, 0, 0, 0.15);
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.terminal-button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.terminal-button.close {
+  background-color: #ff5f56;
+}
+
+.terminal-button.minimize {
+  background-color: #ffbd2e;
+}
+
+.terminal-button.maximize {
+  background-color: #27c93f;
+}
+
+.terminal-title {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  flex: 1;
+}
+
+.terminal-language {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-left: auto;
+}
+
+.terminal-copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-left: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.terminal-copy-btn:hover {
+  color: var(--accent);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.terminal-copy-btn:active {
+  transform: scale(0.95);
+}
+
+/* Terminal Body */
+.terminal-body {
+  background-color: var(--terminal-bg);
+  padding: 1.5rem;
+  min-height: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  line-height: 1.4;
+  tab-size: 4;
+  text-align: left;
+  width: 100%;
+  display: block;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 16px 32px rgba(0, 0, 0, 0.15);
+}
+
+.terminal-wrapper.theme-light .terminal-body {
+  font-weight: 500;
+}
+
+.terminal-line {
+  color: var(--terminal-text);
+  margin: 0;
+  margin-bottom: 0.25rem;
+  white-space: pre;
+}
+
+.code-content {
+  display: inline;
+}
+
+.line-number {
+  display: inline-block;
+  color: var(--text-secondary);
+  opacity: 0.5;
+  margin-right: 0.75rem;
+  min-width: 0.5rem;
+  text-align: right;
+  user-select: none;
+}
+
+.terminal-body.show-line-numbers .line-number {
+  display: inline-block;
+}
+
+.terminal-body:not(.show-line-numbers) .line-number {
+  display: none;
+}
+
+.cursor {
+  display: inline-block;
+  color: var(--accent);
+  animation: blink 1s infinite;
+  margin-left: 2px;
+  font-weight: bold;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Loading State */
+.loading-line {
+  color: var(--accent);
+}
+
+.loading-spinner {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.loading-text {
+  color: var(--accent);
+  font-weight: normal;
+}
+
+/* Scrollbar Styling */
+.terminal-body::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

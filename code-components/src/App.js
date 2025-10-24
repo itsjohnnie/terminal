@@ -1,23 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
+import Terminal from './Terminal.webflow';
 
 function App() {
+  const exampleCode = `// Example code
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10));`;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" style={{ padding: '2rem', backgroundColor: '#1a1a1a', minHeight: '100vh' }}>
+      <h1 style={{ color: 'white', textAlign: 'center', marginBottom: '2rem' }}>
+        Terminal Component Demo
+      </h1>
+
+      <Terminal
+        code={exampleCode}
+        language="JavaScript"
+        theme="claude"
+        aspectRatio="3-2"
+        title="My Terminal"
+        showLineNumbers={true}
+        autoPlay={true}
+        typingSpeed={40}
+      />
     </div>
   );
 }
