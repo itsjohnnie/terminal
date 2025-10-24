@@ -87,7 +87,7 @@ body {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 2rem;
+        padding: 1rem;
         margin-bottom: 0;
         height: 100vh;
         overflow: hidden;
@@ -273,13 +273,18 @@ body {
 
 .terminal-header {
     background-color: var(--bg-tertiary);
-    padding: 0.5rem 1rem 0.5rem 0.625rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.625rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     border: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     border-radius: 8px 8px 0 0;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.15),
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        0 16px 32px rgba(0, 0, 0, 0.15);
 }
 
 .terminal-body {
@@ -300,7 +305,11 @@ body {
     border: 1px solid var(--border);
     border-top: none;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.15),
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        0 16px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* Aspect Ratio Classes */
@@ -347,9 +356,40 @@ body {
 }
 
 .terminal-title {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
     font-weight: 600;
+    flex: 1;
+}
+
+.terminal-language {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-left: auto;
+}
+
+.terminal-copy-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem 0.25rem;
+    margin-left: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.terminal-copy-btn:hover {
+    color: var(--accent);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.terminal-copy-btn:active {
+    transform: scale(0.95);
 }
 
 .terminal-line {

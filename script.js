@@ -14,6 +14,8 @@ class TerminalUI {
         this.themeSelect = document.getElementById('theme');
         this.terminalTitleInput = document.getElementById('terminal-title');
         this.terminalTitleDisplay = document.getElementById('terminal-title-display');
+        this.terminalLanguageDisplay = document.getElementById('terminal-language-display');
+        this.terminalCopyBtn = document.getElementById('terminal-copy-btn');
         this.showLineNumbersCheckbox = document.getElementById('show-line-numbers');
         this.aspectRatioSelect = document.getElementById('aspect-ratio');
         this.terminalSection = document.querySelector('.terminal-section');
@@ -91,6 +93,8 @@ class TerminalUI {
             this.changeAspectRatio(e.target.value);
         });
 
+        this.terminalCopyBtn.addEventListener('click', () => this.copyTerminalCode());
+
         // Export buttons
         this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
         this.exportCodeBtn.addEventListener('click', () => this.copyCode());
@@ -119,6 +123,12 @@ class TerminalUI {
         this.terminalTitleDisplay.textContent = title || 'Terminal';
     }
 
+    updateTerminalLanguage(language) {
+        // Capitalize first letter of language name
+        const displayName = language.charAt(0).toUpperCase() + language.slice(1);
+        this.terminalLanguageDisplay.textContent = displayName;
+    }
+
     toggleLineNumbers(show) {
         if (show) {
             this.terminal.classList.add('show-line-numbers');
@@ -134,6 +144,35 @@ class TerminalUI {
         // Add the selected aspect ratio class
         if (ratio !== 'auto') {
             this.terminalSection.classList.add(`aspect-${ratio}`);
+        }
+    }
+
+    copyTerminalCode() {
+        const terminalLines = this.terminal.querySelectorAll('.terminal-line');
+        let code = '';
+
+        terminalLines.forEach(line => {
+            const codeContent = line.querySelector('.code-content');
+            if (codeContent) {
+                code += codeContent.textContent + '\n';
+            }
+        });
+
+        if (code.trim()) {
+            navigator.clipboard.writeText(code.trim()).then(() => {
+                // Visual feedback - change icon temporarily
+                const originalHTML = this.terminalCopyBtn.innerHTML;
+                this.terminalCopyBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                `;
+                setTimeout(() => {
+                    this.terminalCopyBtn.innerHTML = originalHTML;
+                }, 1000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
         }
     }
 
@@ -738,5 +777,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (codeExamples[language]) {
             codeInput.value = codeExamples[language];
         }
+        terminal.updateTerminalLanguage(language);
     });
 });
