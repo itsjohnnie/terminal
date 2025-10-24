@@ -29,11 +29,74 @@ body {
 }
 
 .container {
-    max-width: 50rem;
+    max-width: 90rem;
     width: 90%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+}
+
+/* Sidebar for desktop */
+.sidebar {
+    display: contents;
+}
+
+/* Desktop Layout: Two columns with terminal on right */
+@media (min-width: 769px) {
+    body {
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: none;
+        height: 100vh;
+        margin: 0;
+        gap: 0;
+    }
+
+    .sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 33.333%;
+        max-width: 500px;
+        min-width: 300px;
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 1.5rem;
+        background-color: var(--bg-primary);
+        gap: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .sidebar .controls-panel,
+    .sidebar .input-section,
+    .sidebar .export-section,
+    .sidebar .info-section {
+        margin-bottom: 0;
+    }
+
+    .terminal-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        margin-bottom: 0;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .terminal-section > * {
+        max-width: 50rem;
+        width: 100%;
+    }
 }
 
 /* Controls Panel */
@@ -205,12 +268,7 @@ body {
 
 /* Terminal Section */
 .terminal-section {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .terminal-header {
@@ -219,7 +277,49 @@ body {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    border: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+}
+
+.terminal-body {
+    background-color: var(--terminal-bg);
+    padding: 1.5rem;
+    padding-top: 1.5rem;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    line-height: 1.4;
+    tab-size: 4;
+    text-align: left;
+    width: 100%;
+    display: block;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Aspect Ratio Classes */
+.terminal-section.aspect-1-1 .terminal-body {
+    aspect-ratio: 1 / 1;
+    min-height: unset;
+    max-height: unset;
+}
+
+.terminal-section.aspect-3-2 .terminal-body {
+    aspect-ratio: 3 / 2;
+    min-height: unset;
+    max-height: unset;
+}
+
+.terminal-section.aspect-16-9 .terminal-body {
+    aspect-ratio: 16 / 9;
+    min-height: unset;
+    max-height: unset;
 }
 
 .terminal-buttons {
@@ -250,23 +350,6 @@ body {
     font-size: 0.7rem;
     color: var(--text-secondary);
     font-weight: 600;
-}
-
-.terminal-body {
-    background-color: var(--terminal-bg);
-    padding: 1.5rem;
-    padding-top: 1.5rem;
-    min-height: 300px;
-    max-height: 500px;
-    overflow-y: auto;
-    overflow-x: auto;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
-    line-height: 1.4;
-    tab-size: 4;
-    text-align: left;
-    width: 100%;
-    display: block;
 }
 
 .terminal-line {
@@ -305,10 +388,10 @@ body {
 
 .cursor {
     display: inline-block;
-    background-color: var(--accent);
+    color: var(--accent);
     animation: blink 1s infinite;
-    width: 8px;
     margin-left: 2px;
+    font-weight: bold;
 }
 
 @keyframes blink {

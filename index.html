@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="container">
+        <div class="sidebar">
         <div class="controls-panel">
             <div class="control-group">
                 <label for="speed">Typing Speed (ms)</label>
@@ -54,6 +55,16 @@
             </div>
 
             <div class="control-group">
+                <label for="aspect-ratio">Aspect Ratio</label>
+                <select id="aspect-ratio">
+                    <option value="auto">Auto</option>
+                    <option value="1-1">1:1 (Square)</option>
+                    <option value="3-2" selected>3:2</option>
+                    <option value="16-9">16:9</option>
+                </select>
+            </div>
+
+            <div class="control-group">
                 <label for="show-line-numbers">
                     <input type="checkbox" id="show-line-numbers" checked>
                     Show Line Numbers
@@ -65,26 +76,10 @@
             <label for="code-input">Paste Your Code Here</label>
             <textarea id="code-input" placeholder="Paste your code here..."></textarea>
             <div class="button-group">
-                <button id="start-btn" class="btn btn-primary">Start Animation</button>
+                <button id="start-btn" class="btn btn-primary">Start</button>
                 <button id="pause-btn" class="btn btn-secondary">Pause</button>
                 <button id="reset-btn" class="btn btn-secondary">Reset</button>
                 <button id="clear-btn" class="btn btn-secondary">Clear</button>
-            </div>
-        </div>
-
-        <div class="terminal-section">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <span class="terminal-button close"></span>
-                    <span class="terminal-button minimize"></span>
-                    <span class="terminal-button maximize"></span>
-                </div>
-                <div class="terminal-title" id="terminal-title-display">Terminal</div>
-            </div>
-            <div class="terminal-body" id="terminal">
-                <div class="terminal-line">
-                    <span class="cursor">█</span>
-                </div>
             </div>
         </div>
 
@@ -106,6 +101,24 @@
                 <li>Click "Start Animation" to see your code animate</li>
                 <li>Use the export options to save your terminal animation</li>
             </ol>
+        </div>
+        </div>
+
+        <div class="terminal-section">
+            <div class="terminal-header">
+                <div class="terminal-buttons">
+                    <span class="terminal-button close"></span>
+                    <span class="terminal-button minimize"></span>
+                    <span class="terminal-button maximize"></span>
+                </div>
+                <div class="terminal-title" id="terminal-title-display">Terminal</div>
+            </div>
+            <div class="terminal-body show-line-numbers" id="terminal">
+                <div class="terminal-line">
+                    <span class="line-number">  1</span>
+                    <span class="cursor">|</span>
+                </div>
+            </div>
         </div>
     </div>
 

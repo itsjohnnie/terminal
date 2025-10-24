@@ -15,6 +15,8 @@ class TerminalUI {
         this.terminalTitleInput = document.getElementById('terminal-title');
         this.terminalTitleDisplay = document.getElementById('terminal-title-display');
         this.showLineNumbersCheckbox = document.getElementById('show-line-numbers');
+        this.aspectRatioSelect = document.getElementById('aspect-ratio');
+        this.terminalSection = document.querySelector('.terminal-section');
 
         // Export buttons
         this.exportHtmlBtn = document.getElementById('export-html');
@@ -85,6 +87,10 @@ class TerminalUI {
             this.toggleLineNumbers(e.target.checked);
         });
 
+        this.aspectRatioSelect.addEventListener('change', (e) => {
+            this.changeAspectRatio(e.target.value);
+        });
+
         // Export buttons
         this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
         this.exportCodeBtn.addEventListener('click', () => this.copyCode());
@@ -121,10 +127,20 @@ class TerminalUI {
         }
     }
 
+    changeAspectRatio(ratio) {
+        // Remove all aspect ratio classes
+        this.terminalSection.classList.remove('aspect-1-1', 'aspect-3-2', 'aspect-16-9');
+
+        // Add the selected aspect ratio class
+        if (ratio !== 'auto') {
+            this.terminalSection.classList.add(`aspect-${ratio}`);
+        }
+    }
+
     clearTerminal() {
         this.terminal.innerHTML = `
             <div class="terminal-line">
-                <span class="cursor">█</span>
+                <span class="cursor">|</span>
             </div>
         `;
         this.codeInput.value = '';
@@ -148,7 +164,7 @@ class TerminalUI {
         this.resetState();
         this.terminal.innerHTML = `
             <div class="terminal-line">
-                <span class="cursor">█</span>
+                <span class="cursor">|</span>
             </div>
         `;
     }
@@ -209,6 +225,12 @@ class TerminalUI {
         // Create loading line element
         const loadingLine = document.createElement('div');
         loadingLine.className = 'terminal-line loading-line';
+
+        // Add line number
+        const lineNumber = document.createElement('span');
+        lineNumber.className = 'line-number';
+        lineNumber.textContent = '  1';
+        loadingLine.appendChild(lineNumber);
 
         const spinnerSpan = document.createElement('span');
         spinnerSpan.className = 'loading-spinner';
@@ -309,7 +331,7 @@ class TerminalUI {
 
             const cursor = document.createElement('span');
             cursor.className = 'cursor';
-            cursor.textContent = '█';
+            cursor.textContent = '|';
             lineElement.appendChild(cursor);
 
             this.terminal.appendChild(lineElement);
@@ -403,7 +425,7 @@ class TerminalUI {
         // Add cursor
         const finalCursor = document.createElement('span');
         finalCursor.className = 'cursor';
-        finalCursor.textContent = '█';
+        finalCursor.textContent = '|';
         finalLine.appendChild(finalCursor);
 
         this.terminal.appendChild(finalLine);
@@ -699,12 +721,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const codeInput = document.getElementById('code-input');
     const languageSelect = document.getElementById('language');
     const terminalElement = document.getElementById('terminal');
+    const terminalSection = document.querySelector('.terminal-section');
 
     // Set default code in the input
     codeInput.value = codeExamples.javascript;
 
     // Show line numbers by default
     terminalElement.classList.add('show-line-numbers');
+
+    // Set default aspect ratio to 3:2
+    terminalSection.classList.add('aspect-3-2');
 
     // Update code example when language changes
     languageSelect.addEventListener('change', (e) => {
