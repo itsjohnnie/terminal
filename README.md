@@ -181,7 +181,6 @@ Potential features to add:
 - Command history
 - Real command execution (with web-based terminal)
 - Custom color schemes
-- Video export (GIF/MP4)
 - Collaborative sharing links
 - Terminal sound effects
 - Multiple cursor styles
