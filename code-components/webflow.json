@@ -1,6 +1,6 @@
 {
     "library": {
-        "name": "Terminal",
-        "components": ["./src/**/*.webflow.@(js|jsx|mjs|ts|tsx)"]
+        "name": "Terminal Component",
+        "components": ["./src/Terminal.js"]
     }
 }
