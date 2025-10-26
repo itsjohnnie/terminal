@@ -1,6 +1,0 @@
-{
-    "library": {
-        "name": "Terminal Component",
-        "components": ["./src/Terminal.js"]
-    }
-}

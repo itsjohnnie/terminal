@@ -11,43 +11,56 @@
     <div class="container">
         <div class="sidebar">
         <div class="controls-panel">
-            <div class="control-group">
-                <label for="speed">Typing Speed (ms)</label>
-                <input type="range" id="speed" min="10" max="200" value="40" step="10">
-                <span id="speed-value">40ms</span>
+            <div class="control-group-row">
+                <div class="control-group">
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="csharp">C#</option>
+                        <option value="php">PHP</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="sql">SQL</option>
+                        <option value="bash">Bash</option>
+                        <option value="plaintext">Plain Text</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="theme">Theme</label>
+                    <select id="theme">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="claude">Claude</option>
+                        <option value="dracula">Dracula</option>
+                        <option value="monokai">Monokai</option>
+                        <option value="nord">Nord</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="control-group">
-                <label for="language">Language</label>
-                <select id="language">
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
-                    <option value="csharp">C#</option>
-                    <option value="php">PHP</option>
-                    <option value="ruby">Ruby</option>
-                    <option value="go">Go</option>
-                    <option value="rust">Rust</option>
-                    <option value="typescript">TypeScript</option>
-                    <option value="html">HTML</option>
-                    <option value="css">CSS</option>
-                    <option value="sql">SQL</option>
-                    <option value="bash">Bash</option>
-                    <option value="plaintext">Plain Text</option>
-                </select>
-            </div>
+            <div class="control-group-row">
+                <div class="control-group">
+                    <label for="speed">Typing Speed (ms)</label>
+                    <input type="number" id="speed" min="10" max="200" value="40" step="10">
+                </div>
 
-            <div class="control-group">
-                <label for="theme">Theme</label>
-                <select id="theme">
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                    <option value="claude">Claude</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="monokai">Monokai</option>
-                    <option value="nord">Nord</option>
-                </select>
+                <div class="control-group">
+                    <label for="aspect-ratio">Aspect Ratio</label>
+                    <select id="aspect-ratio">
+                        <option value="auto">Auto</option>
+                        <option value="1-1">1:1 (Square)</option>
+                        <option value="3-2" selected>3:2</option>
+                        <option value="16-9">16:9</option>
+                    </select>
+                </div>
             </div>
 
             <div class="control-group">
@@ -55,21 +68,20 @@
                 <input type="text" id="terminal-title" value="Terminal" placeholder="Terminal">
             </div>
 
-            <div class="control-group">
-                <label for="aspect-ratio">Aspect Ratio</label>
-                <select id="aspect-ratio">
-                    <option value="auto">Auto</option>
-                    <option value="1-1">1:1 (Square)</option>
-                    <option value="3-2" selected>3:2</option>
-                    <option value="16-9">16:9</option>
-                </select>
-            </div>
+            <div class="control-group-row">
+                <div class="control-group">
+                    <label for="show-line-numbers">
+                        <input type="checkbox" id="show-line-numbers" checked>
+                        Show Line Numbers
+                    </label>
+                </div>
 
-            <div class="control-group">
-                <label for="show-line-numbers">
-                    <input type="checkbox" id="show-line-numbers" checked>
-                    Show Line Numbers
-                </label>
+                <div class="control-group">
+                    <label for="resizable">
+                        <input type="checkbox" id="resizable">
+                        Resizable
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -87,45 +99,36 @@
         <div class="export-section">
             <h3>Export</h3>
             <div class="button-group">
-                <button id="export-html" class="btn btn-export">Export as HTML</button>
-                <button id="copy-code" class="btn btn-export">Copy as Code</button>
-                <button id="export-json" class="btn btn-export">Export as JSON</button>
-                <button id="screenshot" class="btn btn-export">Take Screenshot</button>
-                <button id="record-video" class="btn btn-export">Record Video</button>
+                <button id="screenshot" class="btn btn-export">Image</button>
+                <button id="record-video" class="btn btn-export">Video</button>
+                <button id="export-html" class="btn btn-export">Code</button>
             </div>
         </div>
-
-        <div class="info-section">
-            <h3>How to Use</h3>
-            <ol>
-                <li>Paste your code in the input field above</li>
-                <li>Customize the typing speed, language, and theme</li>
-                <li>Click "Start Animation" to see your code animate</li>
-                <li>Use the export options to save your terminal animation</li>
-            </ol>
-        </div>
         </div>
 
-        <div class="terminal-section">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <span class="terminal-button close"></span>
-                    <span class="terminal-button minimize"></span>
-                    <span class="terminal-button maximize"></span>
+        <div class="terminal-section aspect-3-2">
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="terminal-buttons">
+                        <span class="terminal-button close"></span>
+                        <span class="terminal-button minimize"></span>
+                        <span class="terminal-button maximize"></span>
+                    </div>
+                    <div class="terminal-title" id="terminal-title-display">Terminal</div>
+                    <div class="terminal-language" id="terminal-language-display">JavaScript</div>
+                    <button class="terminal-copy-btn" id="terminal-copy-btn" title="Copy code">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
                 </div>
-                <div class="terminal-title" id="terminal-title-display">Terminal</div>
-                <div class="terminal-language" id="terminal-language-display">JavaScript</div>
-                <button class="terminal-copy-btn" id="terminal-copy-btn" title="Copy code">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="terminal-body show-line-numbers" id="terminal">
-                <div class="terminal-line">
-                    <span class="line-number">  1</span>
-                    <span class="cursor">|</span>
+                <div class="terminal-body show-line-numbers" id="terminal">
+                    <div class="terminal-line">
+                        <span class="line-number">  1</span>
+                        <span class="code-content"></span>
+                        <span class="cursor">|</span>
+                    </div>
                 </div>
             </div>
         </div>

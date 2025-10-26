@@ -8,8 +8,7 @@ class TerminalUI {
         this.pauseBtn = document.getElementById('pause-btn');
         this.resetBtn = document.getElementById('reset-btn');
         this.clearBtn = document.getElementById('clear-btn');
-        this.speedSlider = document.getElementById('speed');
-        this.speedValue = document.getElementById('speed-value');
+        this.speedInput = document.getElementById('speed');
         this.languageSelect = document.getElementById('language');
         this.themeSelect = document.getElementById('theme');
         this.terminalTitleInput = document.getElementById('terminal-title');
@@ -17,13 +16,12 @@ class TerminalUI {
         this.terminalLanguageDisplay = document.getElementById('terminal-language-display');
         this.terminalCopyBtn = document.getElementById('terminal-copy-btn');
         this.showLineNumbersCheckbox = document.getElementById('show-line-numbers');
+        this.resizableCheckbox = document.getElementById('resizable');
         this.aspectRatioSelect = document.getElementById('aspect-ratio');
         this.terminalSection = document.querySelector('.terminal-section');
 
         // Export buttons
         this.exportHtmlBtn = document.getElementById('export-html');
-        this.copyCodeBtn = document.getElementById('copy-code');
-        this.exportJsonBtn = document.getElementById('export-json');
         this.screenshotBtn = document.getElementById('screenshot');
         this.recordVideoBtn = document.getElementById('record-video');
 
@@ -85,9 +83,12 @@ class TerminalUI {
         this.clearBtn.addEventListener('click', () => this.clearTerminal());
 
         // Settings
-        this.speedSlider.addEventListener('input', (e) => {
+        this.speedInput.addEventListener('input', (e) => {
             this.typingSpeed = parseInt(e.target.value);
-            this.updateSpeedDisplay();
+        });
+
+        this.languageSelect.addEventListener('change', (e) => {
+            this.changeLanguage(e.target.value);
         });
 
         this.themeSelect.addEventListener('change', (e) => {
@@ -102,6 +103,10 @@ class TerminalUI {
             this.toggleLineNumbers(e.target.checked);
         });
 
+        this.resizableCheckbox.addEventListener('change', (e) => {
+            this.toggleResizable(e.target.checked);
+        });
+
         this.aspectRatioSelect.addEventListener('change', (e) => {
             this.changeAspectRatio(e.target.value);
         });
@@ -110,8 +115,6 @@ class TerminalUI {
 
         // Export buttons
         this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
-        this.copyCodeBtn.addEventListener('click', () => this.copyCode());
-        this.exportJsonBtn.addEventListener('click', () => this.exportAsJson());
         this.screenshotBtn.addEventListener('click', () => this.takeScreenshot());
         this.recordVideoBtn.addEventListener('click', () => this.toggleVideoRecording());
 
@@ -131,8 +134,14 @@ class TerminalUI {
         document.addEventListener('mouseup', () => this.stopDragging());
     }
 
-    updateSpeedDisplay() {
-        this.speedValue.textContent = `${this.typingSpeed}ms`;
+    changeLanguage(language) {
+        // Update the code input with the example for the selected language
+        if (typeof codeExamples !== 'undefined' && codeExamples[language]) {
+            this.codeInput.value = codeExamples[language];
+        }
+
+        // Update the language display
+        this.updateTerminalLanguage(language);
     }
 
     changeTheme(theme) {
@@ -157,7 +166,58 @@ class TerminalUI {
         }
     }
 
+    toggleResizable(resizable) {
+        const terminalBody = document.querySelector('.terminal-body');
+        const terminalContainer = document.querySelector('.terminal-container');
+
+        if (resizable) {
+            terminalBody.style.resize = 'both';
+            terminalBody.style.minWidth = '400px';
+            terminalBody.style.minHeight = '200px';
+            this.isManuallyResized = false;
+
+            // Use ResizeObserver to sync container width with body width
+            this.resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    const width = entry.borderBoxSize?.[0]?.inlineSize || entry.contentRect.width;
+                    terminalContainer.style.width = width + 'px';
+
+                    // Mark as manually resized and fade the aspect ratio dropdown
+                    if (!this.isManuallyResized) {
+                        this.isManuallyResized = true;
+                        this.aspectRatioSelect.style.opacity = '0.7';
+                    }
+                }
+            });
+            this.resizeObserver.observe(terminalBody);
+        } else {
+            terminalBody.style.resize = 'none';
+            terminalBody.style.minWidth = '';
+            terminalBody.style.minHeight = '';
+            terminalContainer.style.width = '';
+            this.isManuallyResized = false;
+            this.aspectRatioSelect.style.opacity = '';
+
+            if (this.resizeObserver) {
+                this.resizeObserver.disconnect();
+                this.resizeObserver = null;
+            }
+        }
+    }
+
     changeAspectRatio(ratio) {
+        const terminalBody = document.querySelector('.terminal-body');
+        const terminalContainer = document.querySelector('.terminal-container');
+
+        // Reset manual resize styles
+        terminalBody.style.width = '';
+        terminalBody.style.height = '';
+        terminalContainer.style.width = '';
+
+        // Reset opacity and flag
+        this.aspectRatioSelect.style.opacity = '';
+        this.isManuallyResized = false;
+
         // Remove all aspect ratio classes
         this.terminalSection.classList.remove('aspect-1-1', 'aspect-3-2', 'aspect-16-9');
 
@@ -270,8 +330,8 @@ class TerminalUI {
     }
 
     async showLoadingMessages() {
-        // Select 3-4 random loading messages
-        const numMessages = 3 + Math.floor(Math.random() * 2); // 3 or 4
+        // Select 2-3 random loading messages
+        const numMessages = 2 + Math.floor(Math.random() * 2); // 2 or 3
         const selectedMessages = [];
         const availableMessages = [...this.loadingMessages];
 
@@ -301,7 +361,7 @@ class TerminalUI {
 
         this.terminal.appendChild(loadingLine);
 
-        // Spinner animation interval (updates every 300ms)
+        // Spinner animation interval (updates every 250ms - 0.25 seconds)
         const spinnerInterval = setInterval(() => {
             if (!this.isLoadingPhase) {
                 clearInterval(spinnerInterval);
@@ -309,7 +369,14 @@ class TerminalUI {
             }
             this.currentSpinnerFrame = (this.currentSpinnerFrame + 1) % this.spinnerFrames.length;
             spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
-        }, 300);
+        }, 250);
+
+        // Calculate timing to ensure max 4 seconds total
+        // Reserve time for transitions: numMessages * (transition + hold)
+        // Max time per message: 4000ms / numMessages
+        const maxTimePerMessage = 4000 / numMessages;
+        const transitionTime = 400; // Fixed transition time
+        const holdTime = Math.max(200, maxTimePerMessage - transitionTime); // At least 200ms hold
 
         // Show each message with staggered character flip animation
         for (let i = 0; i < selectedMessages.length; i++) {
@@ -321,8 +388,8 @@ class TerminalUI {
             // Animate character by character with stagger
             await this.animateTextTransition(loadingText, oldMessage, newMessage);
 
-            // Hold the complete message for a moment
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Hold the complete message briefly
+            await new Promise(resolve => setTimeout(resolve, holdTime));
         }
 
         // Clean up
@@ -347,12 +414,12 @@ class TerminalUI {
         const promises = [];
         for (let i = 0; i < maxLength; i++) {
             const promise = new Promise(async (resolve) => {
-                // Stagger delay: each character waits a bit longer
-                await new Promise(r => setTimeout(r, i * 30));
+                // Stagger delay: 25ms per character for smoother transitions
+                await new Promise(r => setTimeout(r, i * 25));
 
-                // Flip through random characters briefly
-                const flipDuration = 150;
-                const flipInterval = 30;
+                // Flip through random characters with slower timing
+                const flipDuration = 150; // Increased from 60ms
+                const flipInterval = 30; // Increased from 15ms
                 const flips = Math.floor(flipDuration / flipInterval);
 
                 for (let j = 0; j < flips; j++) {
@@ -511,33 +578,29 @@ class TerminalUI {
         this.isAnimating = false;
         this.updateButtonStates();
 
-        // Remove cursor if present
-        const cursor = this.terminal.querySelector('.cursor');
-        if (cursor) cursor.remove();
-
-        // Add final empty line with line number
-        const finalLine = document.createElement('div');
-        finalLine.className = 'terminal-line';
-
-        // Add line number for the empty line
-        const lineNumber = document.createElement('span');
-        lineNumber.className = 'line-number';
-        lineNumber.textContent = (this.lines.length + 1).toString().padStart(3, ' ');
-        finalLine.appendChild(lineNumber);
-
-        // Add cursor
-        const finalCursor = document.createElement('span');
-        finalCursor.className = 'cursor';
-        finalCursor.textContent = '|';
-        finalLine.appendChild(finalCursor);
-
-        this.terminal.appendChild(finalLine);
+        // Add cursor to the last line instead of creating a new line
+        const lastLine = this.terminal.lastElementChild;
+        if (lastLine) {
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.textContent = '|';
+            lastLine.appendChild(cursor);
+        }
     }
 
     // Export Functions
     exportAsHtml() {
-        const terminalContent = this.terminal.innerHTML;
         const theme = this.themeSelect.value;
+        const showLineNumbers = this.showLineNumbersCheckbox.checked;
+        const terminalTitle = this.terminalTitleInput.value || 'Terminal';
+        const language = this.languageSelect.value;
+        const displayLanguage = language.charAt(0).toUpperCase() + language.slice(1);
+        const code = this.codeInput.value;
+        const typingSpeed = this.typingSpeed;
+        const aspectRatio = this.aspectRatioSelect.value;
+
+        // Get the computed styles for the current theme
+        const themeStyles = this.getThemeStyles(theme);
 
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -545,29 +608,360 @@ class TerminalUI {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal Output</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        .terminal-section {
+            display: inline-block;
+            min-width: 800px;
+        }
+
+        @media (max-width: 800px) {
+            .terminal-section {
+                min-width: 100%;
+            }
+        }
+
+        .terminal-header {
+            background-color: ${themeStyles.bgTertiary};
+            padding: 0.5rem 0.625rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: 1px solid ${themeStyles.border};
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .terminal-buttons {
+            display: flex;
+            gap: 0.375rem;
+        }
+
+        .terminal-button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .terminal-button.close { background-color: #ff5f56; }
+        .terminal-button.minimize { background-color: #ffbd2e; }
+        .terminal-button.maximize { background-color: #27c93f; }
+
+        .terminal-title {
+            font-size: 0.8rem;
+            color: ${themeStyles.textSecondary};
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .terminal-language {
+            font-size: 0.8rem;
+            color: ${themeStyles.textSecondary};
+            font-weight: 400;
+            margin-left: auto;
+        }
+
+        .terminal-body {
+            background-color: ${themeStyles.terminalBg};
+            padding: 1.5rem;
+            ${aspectRatio !== 'auto' ? `aspect-ratio: ${aspectRatio.replace('-', ' / ')};` : 'min-height: 300px; max-height: 500px;'}
+            overflow-y: auto;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            line-height: 1.4;
+            tab-size: 4;
+            border: 1px solid ${themeStyles.border};
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .terminal-line {
+            color: ${themeStyles.terminalText};
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+        }
+
+        .code-content {
+            white-space: pre;
+            display: inline;
+        }
+
+        .line-number {
+            display: ${showLineNumbers ? 'inline-block' : 'none'};
+            color: ${themeStyles.textSecondary};
+            opacity: 0.5;
+            margin-right: 0.75rem;
+            min-width: 0.5rem;
+            text-align: right;
+            user-select: none;
+        }
+
+        .cursor {
+            display: inline-block;
+            color: ${themeStyles.accent};
+            animation: blink 1s infinite;
+            margin-left: 2px;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Syntax Highlighting Overrides */
+        .terminal-body .hljs-comment {
+            font-style: normal !important;
+        }
+
+        /* Scrollbar Styling */
+        .terminal-body::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .terminal-body::-webkit-scrollbar-track {
+            background: ${themeStyles.bgTertiary};
+        }
+
+        .terminal-body::-webkit-scrollbar-thumb {
+            background: ${themeStyles.accent};
+            border-radius: 4px;
+        }
+    </style>
 </head>
-<body class="theme-${theme}">
-    <div class="container">
-        <div class="terminal-section">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <span class="terminal-button close"></span>
-                    <span class="terminal-button minimize"></span>
-                    <span class="terminal-button maximize"></span>
-                </div>
-                <div class="terminal-title">Terminal</div>
+<body>
+    <div class="terminal-section">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <span class="terminal-button close"></span>
+                <span class="terminal-button minimize"></span>
+                <span class="terminal-button maximize"></span>
             </div>
-            <div class="terminal-body">
-                ${terminalContent}
-            </div>
+            <div class="terminal-title">${terminalTitle}</div>
+            <div class="terminal-language">${displayLanguage}</div>
         </div>
+        <div class="terminal-body ${showLineNumbers ? 'show-line-numbers' : ''}" id="terminal"></div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Terminal typing animation script
+        // To use: Call animateTerminal(code, language, speed, showLineNumbers) after loading this HTML
+        function animateTerminal(code, language = 'javascript', typingSpeed = 40, showLineNumbers = true) {
+            const terminal = document.getElementById('terminal');
+            if (!terminal) return;
+
+            const lines = code.split('\\n');
+            let currentLine = 0;
+            let currentChar = 0;
+
+            terminal.innerHTML = '';
+            terminal.className = 'terminal-body' + (showLineNumbers ? ' show-line-numbers' : '');
+
+            function getTypingDelay(currentChar) {
+                const baseDelay = typingSpeed * (0.5 + Math.random() * 1.0);
+                const pauseChars = [' ', ',', ';', '.', ':', '!', '?', ')', '}', ']', '>'];
+                const longPauseChars = ['.', '!', '?', ';'];
+
+                if (longPauseChars.includes(currentChar)) {
+                    return baseDelay * (3.5 + Math.random() * 2.0);
+                } else if (pauseChars.includes(currentChar)) {
+                    return baseDelay * (2.0 + Math.random() * 1.5);
+                } else if (currentChar === '(' || currentChar === '{' || currentChar === '[') {
+                    return baseDelay * (1.8 + Math.random() * 1.0);
+                }
+                return baseDelay;
+            }
+
+            function highlightLine(lineElement) {
+                const codeSpan = lineElement.querySelector('.code-content');
+                if (!codeSpan || language === 'plaintext') return;
+
+                const code = codeSpan.textContent;
+                try {
+                    const highlighted = hljs.highlight(code, { language: language }).value;
+                    codeSpan.innerHTML = highlighted;
+                } catch (e) {
+                    console.warn('Highlighting failed:', e);
+                }
+            }
+
+            function animateNextChar() {
+                if (currentLine >= lines.length) {
+                    const lastLine = terminal.lastElementChild;
+                    if (lastLine) {
+                        const cursor = document.createElement('span');
+                        cursor.className = 'cursor';
+                        cursor.textContent = '|';
+                        lastLine.appendChild(cursor);
+                    }
+                    return;
+                }
+
+                const currentLineText = lines[currentLine];
+
+                if (currentChar === 0) {
+                    const lineElement = document.createElement('div');
+                    lineElement.className = 'terminal-line';
+
+                    const lineNumber = document.createElement('span');
+                    lineNumber.className = 'line-number';
+                    lineNumber.textContent = (currentLine + 1).toString().padStart(3, ' ');
+                    lineElement.appendChild(lineNumber);
+
+                    const codeSpan = document.createElement('span');
+                    codeSpan.className = 'code-content';
+                    lineElement.appendChild(codeSpan);
+
+                    const cursor = document.createElement('span');
+                    cursor.className = 'cursor';
+                    cursor.textContent = '|';
+                    lineElement.appendChild(cursor);
+
+                    terminal.appendChild(lineElement);
+                }
+
+                const lineElement = terminal.lastElementChild;
+                const codeSpan = lineElement.querySelector('.code-content');
+
+                if (currentChar < currentLineText.length) {
+                    const char = currentLineText[currentChar];
+                    codeSpan.textContent += char;
+                    currentChar++;
+
+                    highlightLine(lineElement);
+
+                    const cursor = lineElement.querySelector('.cursor');
+                    if (cursor) {
+                        lineElement.removeChild(cursor);
+                        lineElement.appendChild(cursor);
+                    }
+
+                    terminal.scrollTop = terminal.scrollHeight;
+                    setTimeout(animateNextChar, getTypingDelay(char));
+                } else {
+                    const cursor = lineElement.querySelector('.cursor');
+                    if (cursor) cursor.remove();
+
+                    highlightLine(lineElement);
+
+                    currentLine++;
+                    currentChar = 0;
+
+                    setTimeout(animateNextChar, typingSpeed * (3 + Math.random() * 2));
+                }
+            }
+
+            animateNextChar();
+        }
+
+        // Auto-start with embedded code
+        const embeddedCode = \`${code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+        setTimeout(() => animateTerminal(embeddedCode, '${language}', ${typingSpeed}, ${showLineNumbers}), 500);
+    </script>
 </body>
 </html>`;
 
-        this.downloadFile(html, 'terminal-output.html', 'text/html');
+        // Copy to clipboard
+        navigator.clipboard.writeText(html).then(() => {
+            // Visual feedback
+            const originalText = this.exportHtmlBtn.textContent;
+            this.exportHtmlBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                this.exportHtmlBtn.textContent = originalText;
+            }, 1500);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy HTML to clipboard. Please try again.');
+        });
+    }
+
+    getThemeStyles(theme) {
+        const themes = {
+            dark: {
+                bgPrimary: '#1a1a1a',
+                bgSecondary: '#2d2d2d',
+                bgTertiary: '#3a3a3a',
+                textPrimary: '#e0e0e0',
+                textSecondary: '#b0b0b0',
+                accent: '#00ff41',
+                border: '#404040',
+                terminalBg: '#1e1e1e',
+                terminalText: '#00ff41'
+            },
+            light: {
+                bgPrimary: '#f5f5f5',
+                bgSecondary: '#ffffff',
+                bgTertiary: '#e0e0e0',
+                textPrimary: '#333333',
+                textSecondary: '#666666',
+                accent: '#007acc',
+                border: '#d0d0d0',
+                terminalBg: '#ffffff',
+                terminalText: '#333333'
+            },
+            claude: {
+                bgPrimary: '#1a1a1a',
+                bgSecondary: '#2b2b2b',
+                bgTertiary: '#3a3a3a',
+                textPrimary: '#e8e8e8',
+                textSecondary: '#9b9b9b',
+                accent: '#cc785c',
+                border: '#404040',
+                terminalBg: '#1f1f1f',
+                terminalText: '#cc785c'
+            },
+            dracula: {
+                bgPrimary: '#282a36',
+                bgSecondary: '#44475a',
+                bgTertiary: '#6272a4',
+                textPrimary: '#f8f8f2',
+                textSecondary: '#9fa1b0',
+                accent: '#ff79c6',
+                border: '#6272a4',
+                terminalBg: '#282a36',
+                terminalText: '#50fa7b'
+            },
+            monokai: {
+                bgPrimary: '#272822',
+                bgSecondary: '#3e3d32',
+                bgTertiary: '#49483e',
+                textPrimary: '#f8f8f2',
+                textSecondary: '#cfcfc2',
+                accent: '#66d9ef',
+                border: '#49483e',
+                terminalBg: '#272822',
+                terminalText: '#a6e22e'
+            },
+            nord: {
+                bgPrimary: '#2e3440',
+                bgSecondary: '#3b4252',
+                bgTertiary: '#434c5e',
+                textPrimary: '#eceff4',
+                textSecondary: '#d8dee9',
+                accent: '#88c0d0',
+                border: '#4c566a',
+                terminalBg: '#2e3440',
+                terminalText: '#a3be8c'
+            }
+        };
+
+        return themes[theme] || themes.dark;
     }
 
     copyCode() {
@@ -997,27 +1391,13 @@ You can use this mode for:
 
 // Initialize the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    const terminal = new TerminalUI();
     const codeInput = document.getElementById('code-input');
-    const languageSelect = document.getElementById('language');
-    const terminalElement = document.getElementById('terminal');
-    const terminalSection = document.querySelector('.terminal-section');
 
-    // Set default code in the input
-    codeInput.value = codeExamples.javascript;
+    // Set default code in the input BEFORE initializing terminal
+    if (codeInput && !codeInput.value) {
+        codeInput.value = codeExamples.javascript;
+    }
 
-    // Show line numbers by default
-    terminalElement.classList.add('show-line-numbers');
-
-    // Set default aspect ratio to 3:2
-    terminalSection.classList.add('aspect-3-2');
-
-    // Update code example when language changes
-    languageSelect.addEventListener('change', (e) => {
-        const language = e.target.value;
-        if (codeExamples[language]) {
-            codeInput.value = codeExamples[language];
-        }
-        terminal.updateTerminalLanguage(language);
-    });
+    // Initialize terminal after setting default code
+    new TerminalUI();
 });
