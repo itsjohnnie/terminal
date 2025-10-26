@@ -679,8 +679,8 @@ class TerminalUI {
             ${aspectRatio !== 'auto' ? `aspect-ratio: ${aspectRatio.replace('-', ' / ')};` : 'min-height: 300px; max-height: 500px;'}
             overflow-y: auto;
             overflow-x: auto;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
             line-height: 1.4;
             tab-size: 4;
             border: 1px solid ${themeStyles.border};

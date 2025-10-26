@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal UI Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 </head>
@@ -48,12 +51,12 @@
 
             <div class="control-group-row">
                 <div class="control-group">
-                    <label for="speed">Typing Speed (ms)</label>
+                    <label for="speed">Typing speed (ms)</label>
                     <input type="number" id="speed" min="10" max="200" value="40" step="10">
                 </div>
 
                 <div class="control-group">
-                    <label for="aspect-ratio">Aspect Ratio</label>
+                    <label for="aspect-ratio">Aspect ratio</label>
                     <select id="aspect-ratio">
                         <option value="auto">Auto</option>
                         <option value="1-1">1:1 (Square)</option>
@@ -64,7 +67,7 @@
             </div>
 
             <div class="control-group">
-                <label for="terminal-title">Terminal Title</label>
+                <label for="terminal-title">Terminal title</label>
                 <input type="text" id="terminal-title" value="Terminal" placeholder="Terminal">
             </div>
 
@@ -72,7 +75,7 @@
                 <div class="control-group">
                     <label for="show-line-numbers">
                         <input type="checkbox" id="show-line-numbers" checked>
-                        Show Line Numbers
+                        Show line numbers
                     </label>
                 </div>
 
