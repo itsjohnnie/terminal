@@ -899,10 +899,10 @@ class TerminalUI {
                 bgTertiary: '#3a3a3a',
                 textPrimary: '#e0e0e0',
                 textSecondary: '#b0b0b0',
-                accent: '#00ff41',
+                accent: '#e0e0e0',
                 border: '#404040',
                 terminalBg: '#1e1e1e',
-                terminalText: '#00ff41'
+                terminalText: '#e0e0e0'
             },
             light: {
                 bgPrimary: '#f5f5f5',
@@ -921,10 +921,10 @@ class TerminalUI {
                 bgTertiary: '#3a3a3a',
                 textPrimary: '#e8e8e8',
                 textSecondary: '#9b9b9b',
-                accent: '#cc785c',
+                accent: '#e8e8e8',
                 border: '#404040',
                 terminalBg: '#1f1f1f',
-                terminalText: '#cc785c'
+                terminalText: '#e8e8e8'
             },
             dracula: {
                 bgPrimary: '#282a36',
