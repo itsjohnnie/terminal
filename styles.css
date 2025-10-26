@@ -509,7 +509,6 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
 }
 
 .export-section h3 {
@@ -621,12 +620,24 @@ body.theme-nord {
 /* Responsive Design */
 @media (max-width: 768px) {
     body {
-        padding: 10px;
+        padding: 1.5rem 0;
     }
 
     /* Reorder layout on mobile */
     .terminal-section {
         order: 1;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .terminal-container {
+        width: 100% !important;
+        max-width: 100%;
+    }
+
+    .terminal-header,
+    .terminal-body {
+        width: 100% !important;
     }
 
     .input-section {
@@ -665,7 +676,13 @@ body.theme-nord {
     .input-section,
     .export-section,
     .info-section {
-        padding: 1rem;
+        padding: 1.5rem;
+    }
+
+    .terminal-section,
+    .controls-panel,
+    .input-section {
+        margin-bottom: 1.5rem;
     }
 }
 
