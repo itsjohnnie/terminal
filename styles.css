@@ -1,3 +1,20 @@
+/* Fonts */
+@font-face {
+    font-family: Anthropic Sans;
+    src: url(https://cdn.prod.website-files.com/6889473510b50328dbb70ae6/68c8b3bb8cf0554bdb2b8030_AnthropicSans-Italics-Variable-25x258.woff2) format("woff2");
+    font-weight: 300 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: Anthropic Sans;
+    src: url(https://cdn.prod.website-files.com/6889473510b50328dbb70ae6/68c8b3afb3bfa0054f8d947a_AnthropicSans-Romans-Variable-25x258.woff2) format("woff2");
+    font-weight: 300 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -6,22 +23,22 @@
 }
 
 :root {
-    /* Dark Theme (Default) */
+    /* Dark Theme (Default) - matches Claude theme */
     --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
+    --bg-secondary: #2b2b2b;
     --bg-tertiary: #3a3a3a;
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --accent: #e0e0e0;
+    --text-primary: #e8e8e8;
+    --text-secondary: #9b9b9b;
+    --accent: #e8e8e8;
     --border: #404040;
-    --terminal-bg: #1e1e1e;
-    --terminal-text: #e0e0e0;
-    --button-bg: #007acc;
-    --button-hover: #005a9e;
+    --terminal-bg: #1f1f1f;
+    --terminal-text: #e8e8e8;
+    --button-bg: #c96442;
+    --button-hover: #b36850;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Anthropic Sans', Arial, sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
@@ -138,7 +155,7 @@ body {
 
 .control-group label {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
 }
 
@@ -178,7 +195,9 @@ body {
     border: 1px solid var(--border);
     border-radius: 4px;
     color: var(--text-primary);
-    font-size: 1rem;
+    font-size: 15px;
+    font-family: 'Anthropic Sans', Arial, sans-serif;
+    font-weight: 500;
 }
 
 .control-group select {
@@ -200,10 +219,36 @@ body {
 
 .control-group label input[type="checkbox"] {
     margin-right: 0.5rem;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     accent-color: var(--accent);
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background-color: transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-group label input[type="checkbox"]:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.control-group label input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg);
 }
 
 /* Input Section */
@@ -218,7 +263,7 @@ body {
 .input-section label {
     display: block;
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
@@ -252,12 +297,25 @@ body {
 }
 
 .btn {
-    padding: 0.625rem 1.25rem;
+    appearance: button;
+    background-color: rgba(0, 0, 0, 0);
     border: none;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    border-radius: 7.5px;
+    box-sizing: border-box;
+    color: rgb(250, 249, 245);
     cursor: pointer;
+    display: block;
+    font-family: 'Anthropic Sans', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    height: 36px;
+    line-height: 15px;
+    text-align: center;
+    outline-offset: 4px;
+    padding: 0;
+    scrollbar-width: none;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
     transition: all 0.3s ease;
     flex: 1;
     min-width: 100px;
@@ -266,32 +324,32 @@ body {
 .btn-primary {
     background-color: var(--button-bg);
     color: white;
+    box-shadow: 0 0 0 0px var(--button-bg);
 }
 
 .btn-primary:hover {
-    background-color: var(--button-hover);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px var(--button-bg);
 }
 
 .btn-secondary {
     background-color: var(--bg-tertiary);
     color: var(--text-primary);
     border: 1px solid var(--border);
+    box-shadow: 0 0 0 0px var(--bg-tertiary);
 }
 
 .btn-secondary:hover {
-    background-color: var(--bg-primary);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px var(--bg-tertiary);
 }
 
 .btn-export {
     background-color: var(--accent);
     color: var(--bg-primary);
+    box-shadow: 0 0 0 0px var(--accent);
 }
 
 .btn-export:hover {
-    opacity: 0.8;
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px var(--accent);
 }
 
 /* Terminal Section */
@@ -393,7 +451,7 @@ body {
 .terminal-title {
     font-size: 0.8rem;
     color: var(--text-secondary);
-    font-weight: 600;
+    font-weight: 500;
     flex: 1;
 }
 
@@ -430,7 +488,7 @@ body {
 .terminal-line {
     color: var(--terminal-text);
     margin: 0;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.125rem;
     white-space: nowrap;
 }
 
@@ -467,7 +525,7 @@ body {
 
 .cursor {
     display: inline-block;
-    color: var(--accent);
+    color: var(--terminal-text);
     animation: blink 1s infinite;
     margin-left: 2px;
     font-weight: bold;
@@ -484,16 +542,17 @@ body {
 
 /* Loading Messages */
 .loading-line {
-    color: var(--accent);
+    color: var(--terminal-text);
 }
 
 .loading-spinner {
-    color: var(--accent);
+    color: #c96442;
     font-weight: bold;
+    margin-right: 0.25rem;
 }
 
 .loading-text {
-    color: var(--accent);
+    color: var(--terminal-text);
     font-weight: normal;
     font-family: 'JetBrains Mono', monospace;
 }
@@ -517,7 +576,7 @@ body {
 
 .export-section h3 {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
     margin-bottom: 0.5rem;
 }
@@ -547,53 +606,7 @@ body {
 }
 
 /* Theme Variants */
-body.theme-light {
-    --bg-primary: #f5f5f5;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #e0e0e0;
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --accent: #007acc;
-    --border: #d0d0d0;
-    --terminal-bg: #ffffff;
-    --terminal-text: #333333;
-    --button-bg: #007acc;
-    --button-hover: #005a9e;
-}
-
-body.theme-light .terminal-body {
-    font-weight: 500;
-}
-
-body.theme-dracula {
-    --bg-primary: #282a36;
-    --bg-secondary: #44475a;
-    --bg-tertiary: #6272a4;
-    --text-primary: #f8f8f2;
-    --text-secondary: #9fa1b0;
-    --accent: #ff79c6;
-    --border: #6272a4;
-    --terminal-bg: #282a36;
-    --terminal-text: #50fa7b;
-    --button-bg: #bd93f9;
-    --button-hover: #9f7dd6;
-}
-
-body.theme-monokai {
-    --bg-primary: #272822;
-    --bg-secondary: #3e3d32;
-    --bg-tertiary: #49483e;
-    --text-primary: #f8f8f2;
-    --text-secondary: #cfcfc2;
-    --accent: #66d9ef;
-    --border: #49483e;
-    --terminal-bg: #272822;
-    --terminal-text: #a6e22e;
-    --button-bg: #f92672;
-    --button-hover: #d91c5c;
-}
-
-body.theme-claude {
+body.theme-dark {
     --bg-primary: #1a1a1a;
     --bg-secondary: #2b2b2b;
     --bg-tertiary: #3a3a3a;
@@ -603,22 +616,54 @@ body.theme-claude {
     --border: #404040;
     --terminal-bg: #1f1f1f;
     --terminal-text: #e8e8e8;
-    --button-bg: #cc785c;
+    --button-bg: #c96442;
     --button-hover: #b36850;
 }
 
-body.theme-nord {
-    --bg-primary: #2e3440;
-    --bg-secondary: #3b4252;
-    --bg-tertiary: #434c5e;
-    --text-primary: #eceff4;
-    --text-secondary: #d8dee9;
-    --accent: #88c0d0;
-    --border: #4c566a;
-    --terminal-bg: #2e3440;
-    --terminal-text: #a3be8c;
-    --button-bg: #5e81ac;
-    --button-hover: #4c6e96;
+body.theme-light {
+    --bg-primary: #FAF9F6;
+    --bg-secondary: #FAF9F6;
+    --bg-tertiary: #E8E6DC;
+    --text-primary: #141413;
+    --text-secondary: #666666;
+    --accent: #c96442;
+    --border: #E8E6DC;
+    --terminal-bg: #F0EEE6;
+    --terminal-text: #141413;
+    --button-bg: #c96442;
+    --button-hover: #005a9e;
+}
+
+body.theme-light .terminal-body {
+    font-weight: 500;
+}
+
+body.theme-light .terminal-container {
+    box-shadow: none;
+}
+
+body.theme-light .btn-export {
+    background-color: #141413;
+    color: white;
+    box-shadow: 0 0 0 0px #141413;
+}
+
+body.theme-light .btn-export:hover {
+    box-shadow: 0 0 0 2px #141413;
+}
+
+body.theme-light .sidebar {
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.theme-light .terminal-header {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.theme-light .terminal-body {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: none;
 }
 
 /* Responsive Design */

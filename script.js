@@ -7,7 +7,6 @@ class TerminalUI {
         this.startBtn = document.getElementById('start-btn');
         this.pauseBtn = document.getElementById('pause-btn');
         this.resetBtn = document.getElementById('reset-btn');
-        this.clearBtn = document.getElementById('clear-btn');
         this.speedInput = document.getElementById('speed');
         this.languageSelect = document.getElementById('language');
         this.themeSelect = document.getElementById('theme');
@@ -71,8 +70,53 @@ class TerminalUI {
     }
 
     init() {
+        this.loadSavedTheme();
         this.setupEventListeners();
         this.updateSpeedDisplay();
+        this.setupScrollTrigger();
+    }
+
+    loadSavedTheme() {
+        const savedTheme = localStorage.getItem('terminalTheme');
+        if (savedTheme) {
+            this.themeSelect.value = savedTheme;
+            this.changeTheme(savedTheme);
+        }
+    }
+
+    saveTheme(theme) {
+        localStorage.setItem('terminalTheme', theme);
+    }
+
+    setupScrollTrigger() {
+        // Only setup scroll trigger if this is embedded (not in playground)
+        // Check if sidebar exists - if not, we're embedded
+        const isEmbedded = !document.querySelector('.sidebar');
+
+        if (!isEmbedded) return;
+
+        // Create Intersection Observer to watch when terminal becomes visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // Trigger when at least 50% visible
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                    // Only auto-start if not already animating and code exists
+                    if (!this.isAnimating && this.codeInput.value.trim()) {
+                        this.startAnimation();
+                        // Disconnect after first trigger
+                        observer.disconnect();
+                    }
+                }
+            });
+        }, {
+            threshold: 0.5 // Trigger at 50% visibility
+        });
+
+        // Observe the terminal section
+        const terminalSection = document.querySelector('.terminal-section');
+        if (terminalSection) {
+            observer.observe(terminalSection);
+        }
     }
 
     setupEventListeners() {
@@ -80,7 +124,6 @@ class TerminalUI {
         this.startBtn.addEventListener('click', () => this.startAnimation());
         this.pauseBtn.addEventListener('click', () => this.togglePause());
         this.resetBtn.addEventListener('click', () => this.resetAnimation());
-        this.clearBtn.addEventListener('click', () => this.clearTerminal());
 
         // Settings
         this.speedInput.addEventListener('input', (e) => {
@@ -146,6 +189,7 @@ class TerminalUI {
 
     changeTheme(theme) {
         document.body.className = `theme-${theme}`;
+        this.saveTheme(theme);
     }
 
     updateTerminalTitle(title) {
@@ -256,16 +300,6 @@ class TerminalUI {
         }
     }
 
-    clearTerminal() {
-        this.terminal.innerHTML = `
-            <div class="terminal-line">
-                <span class="cursor">|</span>
-            </div>
-        `;
-        this.codeInput.value = '';
-        this.resetState();
-    }
-
     resetState() {
         this.currentLine = 0;
         this.currentChar = 0;
@@ -361,15 +395,15 @@ class TerminalUI {
 
         this.terminal.appendChild(loadingLine);
 
-        // Spinner animation interval (updates every 250ms - 0.25 seconds)
+        // Spinner animation interval (updates every 160ms)
         const spinnerInterval = setInterval(() => {
             if (!this.isLoadingPhase) {
                 clearInterval(spinnerInterval);
                 return;
             }
             this.currentSpinnerFrame = (this.currentSpinnerFrame + 1) % this.spinnerFrames.length;
-            spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + ' ';
-        }, 250);
+            spinnerSpan.textContent = this.spinnerFrames[this.currentSpinnerFrame] + '   ';
+        }, 160);
 
         // Calculate timing to ensure max 4 seconds total
         // Reserve time for transitions: numMessages * (transition + hold)
@@ -870,9 +904,25 @@ class TerminalUI {
             animateNextChar();
         }
 
-        // Auto-start with embedded code
+        // Auto-start with embedded code using Intersection Observer
         const embeddedCode = \`${code.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
-        setTimeout(() => animateTerminal(embeddedCode, '${language}', ${typingSpeed}, ${showLineNumbers}), 500);
+
+        // Setup Intersection Observer to trigger when 50% visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                    animateTerminal(embeddedCode, '${language}', ${typingSpeed}, ${showLineNumbers});
+                    observer.disconnect();
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        const terminalSection = document.querySelector('.terminal-section');
+        if (terminalSection) {
+            observer.observe(terminalSection);
+        }
     </script>
 </body>
 </html>`;
@@ -895,28 +945,6 @@ class TerminalUI {
         const themes = {
             dark: {
                 bgPrimary: '#1a1a1a',
-                bgSecondary: '#2d2d2d',
-                bgTertiary: '#3a3a3a',
-                textPrimary: '#e0e0e0',
-                textSecondary: '#b0b0b0',
-                accent: '#e0e0e0',
-                border: '#404040',
-                terminalBg: '#1e1e1e',
-                terminalText: '#e0e0e0'
-            },
-            light: {
-                bgPrimary: '#f5f5f5',
-                bgSecondary: '#ffffff',
-                bgTertiary: '#e0e0e0',
-                textPrimary: '#333333',
-                textSecondary: '#666666',
-                accent: '#007acc',
-                border: '#d0d0d0',
-                terminalBg: '#ffffff',
-                terminalText: '#333333'
-            },
-            claude: {
-                bgPrimary: '#1a1a1a',
                 bgSecondary: '#2b2b2b',
                 bgTertiary: '#3a3a3a',
                 textPrimary: '#e8e8e8',
@@ -926,38 +954,16 @@ class TerminalUI {
                 terminalBg: '#1f1f1f',
                 terminalText: '#e8e8e8'
             },
-            dracula: {
-                bgPrimary: '#282a36',
-                bgSecondary: '#44475a',
-                bgTertiary: '#6272a4',
-                textPrimary: '#f8f8f2',
-                textSecondary: '#9fa1b0',
-                accent: '#ff79c6',
-                border: '#6272a4',
-                terminalBg: '#282a36',
-                terminalText: '#50fa7b'
-            },
-            monokai: {
-                bgPrimary: '#272822',
-                bgSecondary: '#3e3d32',
-                bgTertiary: '#49483e',
-                textPrimary: '#f8f8f2',
-                textSecondary: '#cfcfc2',
-                accent: '#66d9ef',
-                border: '#49483e',
-                terminalBg: '#272822',
-                terminalText: '#a6e22e'
-            },
-            nord: {
-                bgPrimary: '#2e3440',
-                bgSecondary: '#3b4252',
-                bgTertiary: '#434c5e',
-                textPrimary: '#eceff4',
-                textSecondary: '#d8dee9',
-                accent: '#88c0d0',
-                border: '#4c566a',
-                terminalBg: '#2e3440',
-                terminalText: '#a3be8c'
+            light: {
+                bgPrimary: '#FAF9F6',
+                bgSecondary: '#FAF9F6',
+                bgTertiary: '#E8E6DC',
+                textPrimary: '#141413',
+                textSecondary: '#666666',
+                accent: '#c96442',
+                border: '#E8E6DC',
+                terminalBg: '#F0EEE6',
+                terminalText: '#141413'
             }
         };
 
