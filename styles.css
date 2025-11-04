@@ -235,8 +235,8 @@ body {
 }
 
 .control-group label input[type="checkbox"]:checked {
-    background-color: var(--accent);
-    border-color: var(--accent);
+    background-color: var(--bg-tertiary);
+    border-color: var(--bg-tertiary);
 }
 
 .control-group label input[type="checkbox"]:checked::after {
@@ -246,7 +246,7 @@ body {
     top: 2px;
     width: 4px;
     height: 9px;
-    border: solid white;
+    border: solid var(--text-primary);
     border-width: 0 1.5px 1.5px 0;
     transform: rotate(45deg);
 }
@@ -696,7 +696,6 @@ body.theme-light .terminal-body {
     .controls-panel {
         order: 3;
         grid-template-columns: 1fr;
-        padding: 1rem;
     }
 
     .export-section {
@@ -725,7 +724,11 @@ body.theme-light .terminal-body {
     .input-section,
     .export-section,
     .info-section {
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+
+    .controls-panel {
+        padding: 1.25rem;
     }
 
     .terminal-section,
@@ -737,7 +740,12 @@ body.theme-light .terminal-body {
 
 @media (max-width: 480px) {
     .container {
-        width: 95%;
+        width: 100%;
+        padding: 0 1.5rem;
+    }
+
+    body {
+        padding: 1.5rem 0;
     }
 
     .terminal-body {
