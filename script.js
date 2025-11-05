@@ -249,18 +249,36 @@ class TerminalUI {
         // Export dropdown
         const exportDropdownBtn = document.getElementById('export-dropdown-btn');
         const exportDropdownMenu = document.getElementById('export-dropdown-menu');
+        const exportCloseBtn = document.getElementById('export-close-btn');
         const exportImageBtn = document.getElementById('export-image');
         const exportVideoBtn = document.getElementById('export-video');
         const exportCodeBtn = document.getElementById('export-code');
 
         exportDropdownBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            exportDropdownMenu.classList.toggle('visible');
+            const isVisible = exportDropdownMenu.classList.toggle('visible');
+            if (window.innerWidth <= 768) {
+                document.body.style.overflow = isVisible ? 'hidden' : '';
+            }
         });
+
+        // Close button click
+        if (exportCloseBtn) {
+            exportCloseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                exportDropdownMenu.classList.remove('visible');
+                if (window.innerWidth <= 768) {
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', () => {
             exportDropdownMenu.classList.remove('visible');
+            if (window.innerWidth <= 768) {
+                document.body.style.overflow = '';
+            }
         });
 
         exportImageBtn.addEventListener('click', () => {

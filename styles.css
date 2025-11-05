@@ -460,7 +460,7 @@ body {
 }
 
 #animation-controls .button-group {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     margin-bottom: 0;
 }
 
@@ -490,6 +490,52 @@ body {
 
 #code-input::placeholder {
     color: var(--text-secondary);
+}
+
+/* Code input scrollbar styling */
+#code-input::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+#code-input::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#code-input::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+#code-input::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 4px solid transparent;
+    background-clip: padding-box;
+}
+
+#code-input::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+    background-clip: padding-box;
+}
+
+body.theme-dark #code-input::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    background-clip: padding-box;
+}
+
+body.theme-dark #code-input::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+    background-clip: padding-box;
+}
+
+body.theme-light #code-input::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    background-clip: padding-box;
+}
+
+body.theme-light #code-input::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.25);
+    background-clip: padding-box;
 }
 
 /* Buttons */
@@ -786,9 +832,22 @@ body {
 /* Fixed Export Button */
 .export-button-fixed {
     position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
+    top: 1rem;
+    right: 1rem;
     z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .export-button-fixed {
+        position: static;
+        width: 100%;
+        order: 4;
+        margin-bottom: 0;
+    }
+
+    .export-button-fixed #export-dropdown-btn {
+        width: 100%;
+    }
 }
 
 .export-dropdown-menu {
@@ -805,6 +864,10 @@ body {
     transform: translateY(-10px);
     transition: opacity 0.2s ease, transform 0.2s ease;
     pointer-events: none;
+}
+
+.export-close-btn {
+    display: none;
 }
 
 .export-dropdown-menu.visible {
@@ -933,7 +996,7 @@ body.theme-light .terminal-body {
 /* Responsive Design */
 @media (max-width: 768px) {
     body {
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 
     /* Reorder layout on mobile */
@@ -946,6 +1009,7 @@ body.theme-light .terminal-body {
     .terminal-container {
         width: 100% !important;
         max-width: 100%;
+        display: block;
     }
 
     .terminal-header,
@@ -971,12 +1035,12 @@ body.theme-light .terminal-body {
     }
 
     .button-group {
-        flex-direction: column;
+        flex-direction: row;
+        gap: 0.5rem;
     }
 
     .btn {
-        width: 100%;
-        flex: none;
+        flex: 1;
     }
 
     .terminal-body {
@@ -995,21 +1059,21 @@ body.theme-light .terminal-body {
         padding: 1.25rem;
     }
 
-    .terminal-section,
     .controls-panel,
-    .input-section {
-        margin-bottom: 1.5rem;
+    .input-section,
+    .terminal-section {
+        margin-bottom: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .container {
         width: 100%;
-        padding: 0 1.5rem;
+        padding: 0 1rem;
     }
 
     body {
-        padding: 1.5rem 0;
+        padding: 1rem 0;
     }
 
     .terminal-body {
@@ -1024,8 +1088,8 @@ body.theme-light .terminal-body {
     }
 
     #code-input {
-        min-height: 120px;
-        font-size: 1rem;
+        min-height: 200px;
+        font-size: 0.8125rem;
     }
 }
 
@@ -1041,6 +1105,10 @@ body.theme-light .terminal-body {
 }
 
 .terminal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-body::-webkit-scrollbar-corner {
     background: transparent;
 }
 
