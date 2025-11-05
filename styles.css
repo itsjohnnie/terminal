@@ -211,9 +211,9 @@ body {
 
 .control-group input[type="range"] {
     width: 100%;
-    height: 4px;
-    border-radius: 2px;
-    background: var(--bg-tertiary);
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--button-bg) 0%, var(--button-bg) var(--range-progress, 21%), var(--bg-tertiary) var(--range-progress, 21%), var(--bg-tertiary) 100%);
     outline: none;
     -webkit-appearance: none;
     cursor: pointer;
@@ -232,27 +232,23 @@ body {
 .control-group input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: var(--button-bg);
+    background: white;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border: 3px solid var(--bg-secondary);
 }
 
 .control-group input[type="range"]:focus-visible::-webkit-slider-thumb {
-    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 40%, transparent);
+    outline: 3px solid;
+    outline-color: color-mix(in srgb, var(--text-primary) 40%, transparent);
+    outline-offset: -3px;
 }
 
 .control-group input[type="range"]::-webkit-slider-thumb:hover {
-    background: var(--button-hover);
     transform: scale(1.1);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.control-group input[type="range"]:focus-visible::-webkit-slider-thumb:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 3px color-mix(in srgb, currentColor 40%, transparent);
 }
 
 .control-group input[type="range"]::-webkit-slider-thumb:active {
@@ -260,28 +256,23 @@ body {
 }
 
 .control-group input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    background: var(--button-bg);
+    background: white;
     cursor: pointer;
-    border: none;
+    border: 3px solid var(--bg-secondary);
     transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .control-group input[type="range"]:focus-visible::-moz-range-thumb {
-    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 40%, transparent);
+    outline: 3px solid;
+    outline-color: color-mix(in srgb, var(--text-primary) 40%, transparent);
+    outline-offset: -3px;
 }
 
 .control-group input[type="range"]::-moz-range-thumb:hover {
-    background: var(--button-hover);
     transform: scale(1.1);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.control-group input[type="range"]:focus-visible::-moz-range-thumb:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), 0 0 0 3px color-mix(in srgb, currentColor 40%, transparent);
 }
 
 .control-group input[type="range"]::-moz-range-thumb:active {
@@ -289,9 +280,15 @@ body {
 }
 
 .control-group input[type="range"]::-moz-range-track {
-    background: var(--bg-tertiary);
-    border-radius: 2px;
-    height: 4px;
+    background: transparent;
+    border-radius: 4px;
+    height: 8px;
+}
+
+.control-group input[type="range"]::-moz-range-progress {
+    background: var(--button-bg);
+    border-radius: 4px;
+    height: 8px;
 }
 
 .control-group input[type="text"],
@@ -538,7 +535,7 @@ body {
 .btn:focus-visible {
     outline: 3px solid;
     outline-color: color-mix(in srgb, currentColor 40%, transparent);
-    outline-offset: 2px;
+    outline-offset: 0;
 }
 
 .btn-primary {

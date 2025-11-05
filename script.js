@@ -28,8 +28,11 @@ class TerminalUI {
         this.recordVideoBtn = document.getElementById('record-video');
 
         // State
-        this.typingSpeed = 40;
+        this.typingSpeed = this.calculateTypingSpeed(50); // Convert slider value to ms
         this.isPaused = false;
+
+        // Update range slider progress on load
+        this.updateRangeProgress();
         this.isAnimating = false;
         this.currentLine = 0;
         this.currentChar = 0;
@@ -75,6 +78,7 @@ class TerminalUI {
     init() {
         this.loadSavedTheme();
         this.loadSavedAspectRatio();
+        this.loadSavedAnimatedState();
         this.setupEventListeners();
         this.setupScrollTrigger();
         // Display static code after a brief delay to ensure everything is ready
@@ -103,6 +107,39 @@ class TerminalUI {
 
     saveAspectRatio(ratio) {
         localStorage.setItem('terminalAspectRatio', ratio);
+    }
+
+    loadSavedAnimatedState() {
+        const savedAnimated = localStorage.getItem('terminalAnimated');
+        if (savedAnimated === 'true') {
+            this.animateCheckbox.checked = true;
+            this.toggleAnimationControls(true);
+        }
+    }
+
+    saveAnimatedState(isAnimated) {
+        localStorage.setItem('terminalAnimated', isAnimated);
+    }
+
+    updateRangeProgress() {
+        const min = parseFloat(this.speedInput.min);
+        const max = parseFloat(this.speedInput.max);
+        const value = parseFloat(this.speedInput.value);
+        const percentage = ((value - min) / (max - min)) * 100;
+        this.speedInput.style.setProperty('--range-progress', `${percentage}%`);
+    }
+
+    calculateTypingSpeed(sliderValue) {
+        // Convert slider value (0-100) to typing speed in milliseconds
+        // 0 = 200ms (slowest), 50 = 50ms (medium), 100 = 10ms (fastest)
+        // Non-linear mapping for better feel
+        if (sliderValue <= 50) {
+            // 0-50: map from 200ms to 50ms
+            return 200 - (sliderValue * 3);
+        } else {
+            // 51-100: map from 50ms to 10ms
+            return 50 - ((sliderValue - 50) * 0.8);
+        }
     }
 
     setupScrollTrigger() {
@@ -155,8 +192,10 @@ class TerminalUI {
 
         // Settings
         this.speedInput.addEventListener('input', (e) => {
-            this.typingSpeed = parseInt(e.target.value);
-            this.speedValue.textContent = `${e.target.value}ms`;
+            const sliderValue = parseInt(e.target.value);
+            this.typingSpeed = this.calculateTypingSpeed(sliderValue);
+            this.speedValue.textContent = sliderValue;
+            this.updateRangeProgress();
         });
 
         this.languageSelect.addEventListener('change', (e) => {
@@ -204,6 +243,7 @@ class TerminalUI {
         // Animation checkbox
         this.animateCheckbox.addEventListener('change', (e) => {
             this.toggleAnimationControls(e.target.checked);
+            this.saveAnimatedState(e.target.checked);
         });
 
         // Export dropdown
