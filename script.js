@@ -8,6 +8,7 @@ class TerminalUI {
         this.pauseBtn = document.getElementById('pause-btn');
         this.resetBtn = document.getElementById('reset-btn');
         this.speedInput = document.getElementById('speed');
+        this.speedValue = document.getElementById('speed-value');
         this.languageSelect = document.getElementById('language');
         this.themeSelect = document.getElementById('theme');
         this.terminalTitleInput = document.getElementById('terminal-title');
@@ -18,6 +19,8 @@ class TerminalUI {
         this.resizableCheckbox = document.getElementById('resizable');
         this.aspectRatioSelect = document.getElementById('aspect-ratio');
         this.terminalSection = document.querySelector('.terminal-section');
+        this.animateCheckbox = document.getElementById('animate-checkbox');
+        this.animationControls = document.getElementById('animation-controls');
 
         // Export buttons
         this.exportHtmlBtn = document.getElementById('export-html');
@@ -71,9 +74,11 @@ class TerminalUI {
 
     init() {
         this.loadSavedTheme();
+        this.loadSavedAspectRatio();
         this.setupEventListeners();
-        this.updateSpeedDisplay();
         this.setupScrollTrigger();
+        // Display static code after a brief delay to ensure everything is ready
+        setTimeout(() => this.displayStaticCode(), 0);
     }
 
     loadSavedTheme() {
@@ -88,12 +93,35 @@ class TerminalUI {
         localStorage.setItem('terminalTheme', theme);
     }
 
+    loadSavedAspectRatio() {
+        const savedAspectRatio = localStorage.getItem('terminalAspectRatio');
+        if (savedAspectRatio) {
+            this.aspectRatioSelect.value = savedAspectRatio;
+            this.changeAspectRatio(savedAspectRatio);
+        }
+    }
+
+    saveAspectRatio(ratio) {
+        localStorage.setItem('terminalAspectRatio', ratio);
+    }
+
     setupScrollTrigger() {
         // Only setup scroll trigger if this is embedded (not in playground)
         // Check if sidebar exists - if not, we're embedded
         const isEmbedded = !document.querySelector('.sidebar');
 
         if (!isEmbedded) return;
+
+        // Check if user prefers reduced motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            // If reduced motion is preferred, just show the code immediately
+            if (this.codeInput.value.trim()) {
+                this.displayStaticCode();
+            }
+            return;
+        }
 
         // Create Intersection Observer to watch when terminal becomes visible
         const observer = new IntersectionObserver((entries) => {
@@ -128,10 +156,15 @@ class TerminalUI {
         // Settings
         this.speedInput.addEventListener('input', (e) => {
             this.typingSpeed = parseInt(e.target.value);
+            this.speedValue.textContent = `${e.target.value}ms`;
         });
 
         this.languageSelect.addEventListener('change', (e) => {
             this.changeLanguage(e.target.value);
+            // Update static display with new language highlighting
+            if (!this.animateCheckbox.checked) {
+                this.displayStaticCode();
+            }
         });
 
         this.themeSelect.addEventListener('change', (e) => {
@@ -142,8 +175,19 @@ class TerminalUI {
             this.updateTerminalTitle(e.target.value);
         });
 
+        // Update static display when code changes (if not animating)
+        this.codeInput.addEventListener('input', () => {
+            if (!this.animateCheckbox.checked) {
+                this.displayStaticCode();
+            }
+        });
+
         this.showLineNumbersCheckbox.addEventListener('change', (e) => {
             this.toggleLineNumbers(e.target.checked);
+            // Refresh display to apply line number changes
+            if (!this.animateCheckbox.checked) {
+                this.displayStaticCode();
+            }
         });
 
         this.resizableCheckbox.addEventListener('change', (e) => {
@@ -152,14 +196,47 @@ class TerminalUI {
 
         this.aspectRatioSelect.addEventListener('change', (e) => {
             this.changeAspectRatio(e.target.value);
+            this.saveAspectRatio(e.target.value);
         });
 
         this.terminalCopyBtn.addEventListener('click', () => this.copyTerminalCode());
 
-        // Export buttons
-        this.exportHtmlBtn.addEventListener('click', () => this.exportAsHtml());
-        this.screenshotBtn.addEventListener('click', () => this.takeScreenshot());
-        this.recordVideoBtn.addEventListener('click', () => this.toggleVideoRecording());
+        // Animation checkbox
+        this.animateCheckbox.addEventListener('change', (e) => {
+            this.toggleAnimationControls(e.target.checked);
+        });
+
+        // Export dropdown
+        const exportDropdownBtn = document.getElementById('export-dropdown-btn');
+        const exportDropdownMenu = document.getElementById('export-dropdown-menu');
+        const exportImageBtn = document.getElementById('export-image');
+        const exportVideoBtn = document.getElementById('export-video');
+        const exportCodeBtn = document.getElementById('export-code');
+
+        exportDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            exportDropdownMenu.classList.toggle('visible');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            exportDropdownMenu.classList.remove('visible');
+        });
+
+        exportImageBtn.addEventListener('click', () => {
+            exportDropdownMenu.classList.remove('visible');
+            this.takeScreenshot();
+        });
+
+        exportVideoBtn.addEventListener('click', () => {
+            exportDropdownMenu.classList.remove('visible');
+            this.toggleVideoRecording();
+        });
+
+        exportCodeBtn.addEventListener('click', () => {
+            exportDropdownMenu.classList.remove('visible');
+            this.exportAsHtml();
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -207,6 +284,71 @@ class TerminalUI {
             this.terminal.classList.add('show-line-numbers');
         } else {
             this.terminal.classList.remove('show-line-numbers');
+        }
+    }
+
+    toggleAnimationControls(show) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (show) {
+            this.animationControls.classList.add('visible');
+            if (prefersReducedMotion) {
+                // If reduced motion is preferred, show code immediately
+                this.displayStaticCode();
+            } else {
+                // Clear terminal for animation
+                this.resetAnimation();
+            }
+        } else {
+            this.animationControls.classList.remove('visible');
+            // Show static code after animation completes
+            setTimeout(() => this.displayStaticCode(), 300);
+        }
+    }
+
+    displayStaticCode() {
+        const code = this.codeInput.value.trim();
+        console.log('displayStaticCode called, code length:', code.length);
+        if (!code) {
+            this.terminal.innerHTML = `
+                <div class="terminal-line">
+                    <span class="cursor">|</span>
+                </div>
+            `;
+            return;
+        }
+
+        const lines = code.split('\n');
+        this.terminal.innerHTML = '';
+
+        lines.forEach((lineText, index) => {
+            const lineElement = document.createElement('div');
+            lineElement.className = 'terminal-line';
+
+            // Add line number
+            const lineNumber = document.createElement('span');
+            lineNumber.className = 'line-number';
+            lineNumber.textContent = (index + 1).toString().padStart(3, ' ');
+            lineElement.appendChild(lineNumber);
+
+            const codeSpan = document.createElement('span');
+            codeSpan.className = 'code-content';
+            codeSpan.textContent = lineText;
+            lineElement.appendChild(codeSpan);
+
+            this.terminal.appendChild(lineElement);
+
+            // Apply syntax highlighting
+            this.highlightLine(lineElement);
+        });
+
+        // Add cursor to the last line
+        const lastLine = this.terminal.lastElementChild;
+        if (lastLine) {
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.textContent = '|';
+            lastLine.appendChild(cursor);
         }
     }
 
@@ -269,6 +411,9 @@ class TerminalUI {
         if (ratio !== 'auto') {
             this.terminalSection.classList.add(`aspect-${ratio}`);
         }
+
+        // Save to localStorage
+        this.saveAspectRatio(ratio);
     }
 
     copyTerminalCode() {
@@ -488,6 +633,15 @@ class TerminalUI {
         }
 
         if (this.isAnimating) return;
+
+        // Check if user prefers reduced motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+            // Show code immediately without animation
+            this.displayStaticCode();
+            return;
+        }
 
         this.resetState();
         this.lines = code.split('\n');
@@ -1221,116 +1375,212 @@ class TerminalUI {
 
 // Code examples for different languages
 const codeExamples = {
-    javascript: `// Fibonacci sequence in JavaScript
-function fibonacci(n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    javascript: `// Fibonacci sequence generator in JavaScript
+function* fibonacci(limit) {
+    let prev = 0, curr = 1;
+
+    while (prev < limit) {
+        yield prev;
+        [prev, curr] = [curr, prev + curr];
+    }
 }
 
-console.log(fibonacci(10));`,
+// Generate Fibonacci numbers up to 1000
+for (const num of fibonacci(1000)) {
+    console.log(num);
+}`,
 
-    python: `# Fibonacci sequence in Python
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
+    python: `# Fibonacci sequence generator in Python
+def fibonacci(limit):
+    """Generate Fibonacci numbers up to a limit"""
+    prev, curr = 0, 1
 
-print(fibonacci(10))`,
+    while prev < limit:
+        yield prev
+        prev, curr = curr, prev + curr
 
-    java: `// Fibonacci sequence in Java
+# Generate Fibonacci numbers up to 1000
+for num in fibonacci(1000):
+    print(num)`,
+
+    java: `// Fibonacci sequence generator in Java
+import java.util.ArrayList;
+import java.util.List;
+
 public class Fibonacci {
-    public static int fibonacci(int n) {
-        if (n <= 1) return n;
-        return fibonacci(n - 1) + fibonacci(n - 2);
+    public static List<Integer> generate(int limit) {
+        List<Integer> sequence = new ArrayList<>();
+        int prev = 0, curr = 1;
+
+        while (prev < limit) {
+            sequence.add(prev);
+            int next = prev + curr;
+            prev = curr;
+            curr = next;
+        }
+        return sequence;
     }
 
     public static void main(String[] args) {
-        System.out.println(fibonacci(10));
+        List<Integer> fibs = generate(1000);
+        for (int num : fibs) {
+            System.out.println(num);
+        }
     }
 }`,
 
-    cpp: `// Fibonacci sequence in C++
+    cpp: `// Fibonacci sequence generator in C++
 #include <iostream>
+#include <vector>
 using namespace std;
 
-int fibonacci(int n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+vector<int> fibonacci(int limit) {
+    vector<int> sequence;
+    int prev = 0, curr = 1;
+
+    while (prev < limit) {
+        sequence.push_back(prev);
+        int next = prev + curr;
+        prev = curr;
+        curr = next;
+    }
+    return sequence;
 }
 
 int main() {
-    cout << fibonacci(10) << endl;
+    vector<int> fibs = fibonacci(1000);
+    for (int num : fibs) {
+        cout << num << endl;
+    }
     return 0;
 }`,
 
-    csharp: `// Fibonacci sequence in C#
+    csharp: `// Fibonacci sequence generator in C#
 using System;
+using System.Collections.Generic;
 
 class Program {
-    static int Fibonacci(int n) {
-        if (n <= 1) return n;
-        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    static List<int> Fibonacci(int limit) {
+        List<int> sequence = new List<int>();
+        int prev = 0, curr = 1;
+
+        while (prev < limit) {
+            sequence.Add(prev);
+            int next = prev + curr;
+            prev = curr;
+            curr = next;
+        }
+        return sequence;
     }
 
     static void Main() {
-        Console.WriteLine(Fibonacci(10));
+        List<int> fibs = Fibonacci(1000);
+        foreach (int num in fibs) {
+            Console.WriteLine(num);
+        }
     }
 }`,
 
     php: `<?php
-// Fibonacci sequence in PHP
-function fibonacci($n) {
-    if ($n <= 1) return $n;
-    return fibonacci($n - 1) + fibonacci($n - 2);
+// Fibonacci sequence generator in PHP
+function fibonacci($limit) {
+    $sequence = array();
+    $prev = 0;
+    $curr = 1;
+
+    while ($prev < $limit) {
+        array_push($sequence, $prev);
+        $next = $prev + $curr;
+        $prev = $curr;
+        $curr = $next;
+    }
+    return $sequence;
 }
 
-echo fibonacci(10);
+$fibs = fibonacci(1000);
+foreach ($fibs as $num) {
+    echo $num . "\n";
+}
 ?>`,
 
-    ruby: `# Fibonacci sequence in Ruby
-def fibonacci(n)
-    return n if n <= 1
-    fibonacci(n - 1) + fibonacci(n - 2)
+    ruby: `# Fibonacci sequence generator in Ruby
+def fibonacci(limit)
+  sequence = []
+  prev, curr = 0, 1
+
+  while prev < limit
+    sequence << prev
+    prev, curr = curr, prev + curr
+  end
+
+  sequence
 end
 
-puts fibonacci(10)`,
+# Generate and print Fibonacci numbers
+fibs = fibonacci(1000)
+fibs.each { |num| puts num }`,
 
-    go: `// Fibonacci sequence in Go
+    go: `// Fibonacci sequence generator in Go
 package main
 
 import "fmt"
 
-func fibonacci(n int) int {
-    if n <= 1 {
-        return n
+func fibonacci(limit int) []int {
+    sequence := []int{}
+    prev, curr := 0, 1
+
+    for prev < limit {
+        sequence = append(sequence, prev)
+        prev, curr = curr, prev+curr
     }
-    return fibonacci(n-1) + fibonacci(n-2)
+
+    return sequence
 }
 
 func main() {
-    fmt.Println(fibonacci(10))
+    fibs := fibonacci(1000)
+    for _, num := range fibs {
+        fmt.Println(num)
+    }
 }`,
 
-    rust: `// Fibonacci sequence in Rust
-fn fibonacci(n: u32) -> u32 {
-    match n {
-        0 => 0,
-        1 => 1,
-        _ => fibonacci(n - 1) + fibonacci(n - 2),
+    rust: `// Fibonacci sequence generator in Rust
+fn fibonacci(limit: u32) -> Vec<u32> {
+    let mut sequence = Vec::new();
+    let mut prev = 0;
+    let mut curr = 1;
+
+    while prev < limit {
+        sequence.push(prev);
+        let next = prev + curr;
+        prev = curr;
+        curr = next;
     }
+
+    sequence
 }
 
 fn main() {
-    println!("{}", fibonacci(10));
+    let fibs = fibonacci(1000);
+    for num in fibs {
+        println!("{}", num);
+    }
 }`,
 
-    typescript: `// Fibonacci sequence in TypeScript
-function fibonacci(n: number): number {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    typescript: `// Fibonacci sequence generator in TypeScript
+function* fibonacci(limit: number): Generator<number> {
+    let prev = 0, curr = 1;
+
+    while (prev < limit) {
+        yield prev;
+        [prev, curr] = [curr, prev + curr];
+    }
 }
 
-console.log(fibonacci(10));`,
+// Generate Fibonacci numbers up to 1000
+for (const num of fibonacci(1000)) {
+    console.log(num);
+}`,
 
     html: `<!DOCTYPE html>
 <html lang="en">
@@ -1373,26 +1623,37 @@ ORDER BY orders.total DESC
 LIMIT 10;`,
 
     bash: `#!/bin/bash
-# Fibonacci sequence in Bash
+# Fibonacci sequence generator in Bash
 
 fibonacci() {
-    if [ $1 -le 1 ]; then
-        echo $1
-    else
-        echo $(( $(fibonacci $(($1-1))) + $(fibonacci $(($1-2))) ))
-    fi
+    local limit=$1
+    local prev=0
+    local curr=1
+
+    while [ $prev -lt $limit ]; do
+        echo $prev
+        local next=$((prev + curr))
+        prev=$curr
+        curr=$next
+    done
 }
 
-fibonacci 10`,
+# Generate Fibonacci numbers up to 1000
+fibonacci 1000`,
 
-    plaintext: `This is plain text.
+    plaintext: `This is plain text mode.
 No syntax highlighting will be applied.
 
 You can use this mode for:
-- General notes
-- Documentation
-- Plain text output
-- Any non-code content`
+- General notes and documentation
+- Plain text output from commands
+- Configuration files
+- Log files
+- README content
+- Any non-code content
+
+This example has more than 10 lines
+to match the other code examples.`
 };
 
 // Initialize the app when DOM is ready
@@ -1401,7 +1662,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set default code in the input BEFORE initializing terminal
     if (codeInput && !codeInput.value) {
-        codeInput.value = codeExamples.javascript;
+        codeInput.value = codeExamples.bash;
     }
 
     // Initialize terminal after setting default code
