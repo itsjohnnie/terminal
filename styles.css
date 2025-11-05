@@ -96,7 +96,8 @@ body {
 
 .container {
     max-width: 90rem;
-    width: 90%;
+    width: 100%;
+    padding: 0 1.5rem;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -122,6 +123,7 @@ body {
         max-width: none;
         height: 100vh;
         margin: 0;
+        padding: 0;
         gap: 0;
     }
 
@@ -184,7 +186,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -418,7 +420,7 @@ body {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -617,7 +619,7 @@ body.theme-light #code-input::-webkit-scrollbar-thumb:hover {
 
 /* Terminal Section */
 .terminal-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .terminal-container {
@@ -914,7 +916,7 @@ body.theme-light #code-input::-webkit-scrollbar-thumb:hover {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .info-section h3 {
@@ -995,8 +997,12 @@ body.theme-light .terminal-body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 1.5rem;
+    }
+
     body {
-        padding: 1rem 0;
+        padding: 1.5rem 0;
     }
 
     /* Reorder layout on mobile */
@@ -1004,6 +1010,7 @@ body.theme-light .terminal-body {
         order: 1;
         width: 100%;
         max-width: 100%;
+        margin-bottom: 1.5rem;
     }
 
     .terminal-container {
@@ -1019,11 +1026,13 @@ body.theme-light .terminal-body {
 
     .input-section {
         order: 2;
+        margin-bottom: 1.5rem;
     }
 
     .controls-panel {
         order: 3;
         grid-template-columns: 1fr;
+        margin-bottom: 1.5rem;
     }
 
     .export-section {
@@ -1032,6 +1041,7 @@ body.theme-light .terminal-body {
 
     .info-section {
         order: 5;
+        margin-bottom: 1.5rem;
     }
 
     .button-group {
@@ -1051,33 +1061,53 @@ body.theme-light .terminal-body {
 
     #code-input {
         font-size: 0.875rem;
+        min-height: 280px;
     }
 
     .input-section,
     .export-section,
     .info-section {
-        padding: 1.25rem;
+        padding: 1.5rem;
     }
 
     .controls-panel {
-        padding: 1.25rem;
-    }
-
-    .controls-panel,
-    .input-section,
-    .terminal-section {
-        margin-bottom: 1rem;
+        padding: 1.5rem;
     }
 }
 
 @media (max-width: 480px) {
     .container {
-        width: 100%;
         padding: 0 1rem;
     }
 
     body {
         padding: 1rem 0;
+    }
+
+    .terminal-section {
+        margin-bottom: 1rem;
+    }
+
+    .input-section {
+        margin-bottom: 1rem;
+    }
+
+    .controls-panel {
+        margin-bottom: 1rem;
+    }
+
+    .info-section {
+        margin-bottom: 1rem;
+    }
+
+    .input-section,
+    .export-section,
+    .info-section {
+        padding: 1rem;
+    }
+
+    .controls-panel {
+        padding: 1rem;
     }
 
     .terminal-body {
