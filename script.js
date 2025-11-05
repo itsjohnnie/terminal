@@ -233,6 +233,29 @@ class TerminalUI {
             this.toggleResizable(e.target.checked);
         });
 
+        // Handle window resize/orientation changes
+        window.addEventListener('resize', () => {
+            const terminalBody = document.querySelector('.terminal-body');
+            const terminalContainer = document.querySelector('.terminal-container');
+
+            // Reset fixed sizing on mobile
+            if (window.innerWidth <= 768) {
+                terminalBody.style.width = '';
+                terminalBody.style.height = '';
+                terminalContainer.style.width = '';
+                terminalBody.style.resize = 'none';
+
+                // Disconnect observer on mobile
+                if (this.resizeObserver) {
+                    this.resizeObserver.disconnect();
+                    this.resizeObserver = null;
+                }
+            } else if (this.resizableCheckbox.checked && !this.resizeObserver) {
+                // Re-enable resizable on desktop if checkbox is checked
+                this.toggleResizable(true);
+            }
+        });
+
         this.aspectRatioSelect.addEventListener('change', (e) => {
             this.changeAspectRatio(e.target.value);
             this.saveAspectRatio(e.target.value);
@@ -415,25 +438,28 @@ class TerminalUI {
         const terminalContainer = document.querySelector('.terminal-container');
 
         if (resizable) {
-            terminalBody.style.resize = 'both';
-            terminalBody.style.minWidth = '400px';
-            terminalBody.style.minHeight = '200px';
-            this.isManuallyResized = false;
+            // Only enable resize on desktop
+            if (window.innerWidth > 768) {
+                terminalBody.style.resize = 'both';
+                terminalBody.style.minWidth = '400px';
+                terminalBody.style.minHeight = '200px';
+                this.isManuallyResized = false;
 
-            // Use ResizeObserver to sync container width with body width
-            this.resizeObserver = new ResizeObserver(entries => {
-                for (let entry of entries) {
-                    const width = entry.borderBoxSize?.[0]?.inlineSize || entry.contentRect.width;
-                    terminalContainer.style.width = width + 'px';
+                // Use ResizeObserver to sync container width with body width
+                this.resizeObserver = new ResizeObserver(entries => {
+                    for (let entry of entries) {
+                        const width = entry.borderBoxSize?.[0]?.inlineSize || entry.contentRect.width;
+                        terminalContainer.style.width = width + 'px';
 
-                    // Mark as manually resized and fade the aspect ratio dropdown
-                    if (!this.isManuallyResized) {
-                        this.isManuallyResized = true;
-                        this.aspectRatioSelect.style.opacity = '0.7';
+                        // Mark as manually resized and fade the aspect ratio dropdown
+                        if (!this.isManuallyResized) {
+                            this.isManuallyResized = true;
+                            this.aspectRatioSelect.style.opacity = '0.7';
+                        }
                     }
-                }
-            });
-            this.resizeObserver.observe(terminalBody);
+                });
+                this.resizeObserver.observe(terminalBody);
+            }
         } else {
             terminalBody.style.resize = 'none';
             terminalBody.style.minWidth = '';

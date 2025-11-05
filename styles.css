@@ -1049,6 +1049,10 @@ body.theme-light .terminal-body {
         max-height: 400px;
     }
 
+    #code-input {
+        font-size: 0.875rem;
+    }
+
     .input-section,
     .export-section,
     .info-section {
